@@ -1,0 +1,6 @@
+/* MUI's CssBaseline handles the reset; this only covers what sits outside the React tree. */
+html,
+body,
+#root {
+  height: 100%;
+}
