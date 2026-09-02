@@ -1,18 +1,18 @@
-import CssBaseline from '@mui/material/CssBaseline'
-import { ThemeProvider } from '@mui/material/styles'
-import { useMemo } from 'react'
-import { Navigate, Route, Routes } from 'react-router-dom'
-import { useAppSelector } from './app/hooks'
-import { Layout } from './components/Layout'
-import { NotFoundPage } from './components/NotFoundPage'
-import { SupplierDetailPage } from './features/suppliers/SupplierDetailPage'
-import { SupplierListPage } from './features/suppliers/SupplierListPage'
-import { selectThemeMode } from './features/ui/uiSlice'
-import { buildTheme } from './theme'
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider } from '@mui/material/styles';
+import { useMemo } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { useAppSelector } from './app/hooks';
+import { Layout } from './components/Layout';
+import { NotFoundPage } from './components/NotFoundPage';
+import { SupplierDetailPage } from './features/suppliers/SupplierDetailPage';
+import { SupplierListPage } from './features/suppliers/SupplierListPage';
+import { selectThemeMode } from './features/ui/uiSlice';
+import { buildTheme } from './theme';
 
 export const App = () => {
-  const themeMode = useAppSelector(selectThemeMode)
-  const theme = useMemo(() => buildTheme(themeMode), [themeMode])
+  const themeMode = useAppSelector(selectThemeMode);
+  const theme = useMemo(() => buildTheme(themeMode), [themeMode]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -26,5 +26,5 @@ export const App = () => {
         </Route>
       </Routes>
     </ThemeProvider>
-  )
-}
+  );
+};

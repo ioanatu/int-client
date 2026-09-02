@@ -1,29 +1,29 @@
-import ClearIcon from '@mui/icons-material/Clear'
-import SearchIcon from '@mui/icons-material/Search'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import InputAdornment from '@mui/material/InputAdornment'
-import MenuItem from '@mui/material/MenuItem'
-import TextField from '@mui/material/TextField'
-import { useEffect, useState } from 'react'
+import ClearIcon from '@mui/icons-material/Clear';
+import SearchIcon from '@mui/icons-material/Search';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import InputAdornment from '@mui/material/InputAdornment';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
+import { useEffect, useState } from 'react';
 import {
   ASSESSMENT_STATUSES,
+  type ListSuppliersQuery,
   RELATIONSHIP_STATUSES,
   RISK_LEVELS,
-  type ListSuppliersQuery,
-} from '../../api/types'
-import { humanizeEnum } from '../../utils/format'
+} from '../../api/types';
+import { humanizeEnum } from '../../utils/format';
 
-const SEARCH_DEBOUNCE_MS = 300
+const SEARCH_DEBOUNCE_MS = 300;
 
 interface SupplierFiltersProps {
-  query: ListSuppliersQuery
-  onFilterChange: (key: keyof ListSuppliersQuery, value: string | undefined) => void
-  onClear: () => void
-  hasFilters: boolean
+  query: ListSuppliersQuery;
+  onFilterChange: (key: keyof ListSuppliersQuery, value: string | undefined) => void;
+  onClear: () => void;
+  hasFilters: boolean;
 }
 
-const selectProps = { size: 'small', select: true, sx: { minWidth: 170 } } as const
+const selectProps = { size: 'small', select: true, sx: { minWidth: 170 } } as const;
 
 export const SupplierFilters = ({
   query,
@@ -32,23 +32,26 @@ export const SupplierFilters = ({
   hasFilters,
 }: SupplierFiltersProps) => {
   // The text field stays responsive while the debounced value drives the request.
-  const [search, setSearch] = useState(query.search ?? '')
-  const [lastAppliedSearch, setLastAppliedSearch] = useState(query.search)
+  const [search, setSearch] = useState(query.search ?? '');
+  const [lastAppliedSearch, setLastAppliedSearch] = useState(query.search);
 
   // Adjusting state during render (rather than in an effect) is React's recommended way to
   // resync with a changed prop — it keeps the input in step with back/forward navigation.
   if (query.search !== lastAppliedSearch) {
-    setLastAppliedSearch(query.search)
-    setSearch(query.search ?? '')
+    setLastAppliedSearch(query.search);
+    setSearch(query.search ?? '');
   }
 
   useEffect(() => {
     if (search === (query.search ?? '')) {
-      return
+      return;
     }
-    const timer = setTimeout(() => onFilterChange('search', search.trim() || undefined), SEARCH_DEBOUNCE_MS)
-    return () => clearTimeout(timer)
-  }, [search, query.search, onFilterChange])
+    const timer = setTimeout(
+      () => onFilterChange('search', search.trim() || undefined),
+      SEARCH_DEBOUNCE_MS,
+    );
+    return () => clearTimeout(timer);
+  }, [search, query.search, onFilterChange]);
 
   return (
     <Box
@@ -125,5 +128,5 @@ export const SupplierFilters = ({
         Clear
       </Button>
     </Box>
-  )
-}
+  );
+};

@@ -1,31 +1,31 @@
-import Box from '@mui/material/Box'
-import Fade from '@mui/material/Fade'
-import LinearProgress from '@mui/material/LinearProgress'
-import Paper from '@mui/material/Paper'
-import Table from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import TableContainer from '@mui/material/TableContainer'
-import TableHead from '@mui/material/TableHead'
-import TablePagination from '@mui/material/TablePagination'
-import TableRow from '@mui/material/TableRow'
-import Typography from '@mui/material/Typography'
-import { useNavigate } from 'react-router-dom'
-import { getErrorMessage } from '../../api/errors'
-import { useListSuppliersQuery } from '../../api/suppliersApi'
-import { EmptyState, ErrorState, LoadingState } from '../../components/QueryStates'
-import { RelationshipStatusChip, RiskChip } from '../../components/StatusChips'
-import { SupplierFilters } from './SupplierFilters'
-import { PAGE_SIZE_OPTIONS, useSupplierListParams } from './useSupplierListParams'
+import Box from '@mui/material/Box';
+import Fade from '@mui/material/Fade';
+import LinearProgress from '@mui/material/LinearProgress';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
+import Typography from '@mui/material/Typography';
+import { useNavigate } from 'react-router-dom';
+import { getErrorMessage } from '../../api/errors';
+import { useListSuppliersQuery } from '../../api/suppliersApi';
+import { EmptyState, ErrorState, LoadingState } from '../../components/QueryStates';
+import { RelationshipStatusChip, RiskChip } from '../../components/StatusChips';
+import { SupplierFilters } from './SupplierFilters';
+import { PAGE_SIZE_OPTIONS, useSupplierListParams } from './useSupplierListParams';
 
 export const SupplierListPage = () => {
-  const navigate = useNavigate()
-  const { query, setFilter, setPage, setLimit, clearFilters, hasFilters } = useSupplierListParams()
+  const navigate = useNavigate();
+  const { query, setFilter, setPage, setLimit, clearFilters, hasFilters } = useSupplierListParams();
 
-  const { data, error, isLoading, isFetching, refetch } = useListSuppliersQuery(query)
+  const { data, error, isLoading, isFetching, refetch } = useListSuppliersQuery(query);
 
-  const suppliers = data?.data ?? []
-  const total = data?.pagination.total ?? 0
+  const suppliers = data?.data ?? [];
+  const total = data?.pagination.total ?? 0;
 
   return (
     <Box>
@@ -64,9 +64,7 @@ export const SupplierListPage = () => {
           {suppliers.length === 0 ? (
             <EmptyState
               message={
-                hasFilters
-                  ? 'No suppliers match these filters.'
-                  : 'The API returned no suppliers.'
+                hasFilters ? 'No suppliers match these filters.' : 'The API returned no suppliers.'
               }
             />
           ) : (
@@ -91,14 +89,18 @@ export const SupplierListPage = () => {
                       onClick={() => void navigate(`/suppliers/${supplier.id}`)}
                       onKeyDown={(event) => {
                         if (event.key === 'Enter' || event.key === ' ') {
-                          event.preventDefault()
-                          void navigate(`/suppliers/${supplier.id}`)
+                          event.preventDefault();
+                          void navigate(`/suppliers/${supplier.id}`);
                         }
                       }}
                     >
                       <TableCell>{supplier.name}</TableCell>
                       <TableCell>
-                        <Typography variant="body2" color="text.secondary" sx={{ fontFamily: 'monospace' }}>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{ fontFamily: 'monospace' }}
+                        >
                           {supplier.id}
                         </Typography>
                       </TableCell>
@@ -129,5 +131,5 @@ export const SupplierListPage = () => {
         </Paper>
       ) : null}
     </Box>
-  )
-}
+  );
+};

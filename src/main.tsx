@@ -1,14 +1,14 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { Provider } from 'react-redux'
-import { BrowserRouter } from 'react-router-dom'
-import { App } from './App'
-import { store } from './app/store'
-import './index.css'
+import './index.css';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
+import { App } from './App';
+import { store } from './app/store';
 
-const container = document.querySelector('#root')
+const container = document.querySelector('#root');
 if (!container) {
-  throw new Error('Root element #root was not found in index.html')
+  throw new Error('Root element #root was not found in index.html');
 }
 
 createRoot(container).render(
@@ -19,4 +19,4 @@ createRoot(container).render(
       </BrowserRouter>
     </Provider>
   </StrictMode>,
-)
+);

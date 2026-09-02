@@ -1,23 +1,23 @@
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
-import Divider from '@mui/material/Divider'
-import Link from '@mui/material/Link'
-import Stack from '@mui/material/Stack'
-import Typography from '@mui/material/Typography'
-import type { ReactNode } from 'react'
-import { Link as RouterLink, useParams } from 'react-router-dom'
-import { getErrorMessage, getErrorStatus } from '../../api/errors'
-import { useGetSupplierQuery } from '../../api/suppliersApi'
-import { ErrorState, LoadingState } from '../../components/QueryStates'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Divider from '@mui/material/Divider';
+import Link from '@mui/material/Link';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import type { ReactNode } from 'react';
+import { Link as RouterLink, useParams } from 'react-router-dom';
+import { getErrorMessage, getErrorStatus } from '../../api/errors';
+import { useGetSupplierQuery } from '../../api/suppliersApi';
+import { ErrorState, LoadingState } from '../../components/QueryStates';
 import {
   AssessmentStatusChip,
   RelationshipStatusChip,
   RiskChip,
-} from '../../components/StatusChips'
-import { formatCurrency, formatDate, formatDateTime, formatNumber } from '../../utils/format'
+} from '../../components/StatusChips';
+import { formatCurrency, formatDate, formatDateTime, formatNumber } from '../../utils/format';
 
 const Field = ({ label, children }: { label: string; children: ReactNode }) => (
   <Box>
@@ -28,7 +28,7 @@ const Field = ({ label, children }: { label: string; children: ReactNode }) => (
       {children}
     </Typography>
   </Box>
-)
+);
 
 const Section = ({ title, children }: { title: string; children: ReactNode }) => (
   <Card>
@@ -50,19 +50,24 @@ const Section = ({ title, children }: { title: string; children: ReactNode }) =>
       </Box>
     </CardContent>
   </Card>
-)
+);
 
 export const SupplierDetailPage = () => {
-  const { supplierId = '' } = useParams<{ supplierId: string }>()
-  const { data: supplier, error, isLoading, refetch } = useGetSupplierQuery(supplierId, {
+  const { supplierId = '' } = useParams<{ supplierId: string }>();
+  const {
+    data: supplier,
+    error,
+    isLoading,
+    refetch,
+  } = useGetSupplierQuery(supplierId, {
     skip: !supplierId,
-  })
+  });
 
   const backButton = (
     <Button component={RouterLink} to="/suppliers" startIcon={<ArrowBackIcon />} sx={{ mb: 2 }}>
       Back to suppliers
     </Button>
-  )
+  );
 
   if (isLoading) {
     return (
@@ -70,28 +75,27 @@ export const SupplierDetailPage = () => {
         {backButton}
         <LoadingState label="Loading supplier…" />
       </Box>
-    )
+    );
   }
 
   if (error || !supplier) {
-    const notFound = getErrorStatus(error) === 404
+    const notFound = getErrorStatus(error) === 404;
     return (
       <Box>
         {backButton}
         <ErrorState
           title={notFound ? 'Supplier not found' : 'Could not load supplier'}
           message={
-            notFound
-              ? `No supplier exists with id “${supplierId}”.`
-              : getErrorMessage(error)
+            notFound ? `No supplier exists with id “${supplierId}”.` : getErrorMessage(error)
           }
           onRetry={notFound ? undefined : () => void refetch()}
         />
       </Box>
-    )
+    );
   }
 
-  const { identity, address, contact, company, relationship, risk, assessment, documents } = supplier
+  const { identity, address, contact, company, relationship, risk, assessment, documents } =
+    supplier;
 
   return (
     <Box>
@@ -184,5 +188,5 @@ export const SupplierDetailPage = () => {
         </Typography>
       </Stack>
     </Box>
-  )
-}
+  );
+};

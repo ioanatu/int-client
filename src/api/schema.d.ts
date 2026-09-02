@@ -4,401 +4,401 @@
  */
 
 export interface paths {
-    "/api/v1/suppliers": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List suppliers
-         * @description Returns a paginated list of suppliers. All query parameters are optional and are combined with AND. `search` matches the supplier id, name, industry and country case-insensitively.
-         */
-        get: operations["SuppliersController_findAll_v1"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  '/api/v1/suppliers': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/suppliers/{supplierId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get a supplier by id
-         * @description Returns the full profile of a single supplier.
-         */
-        get: operations["SuppliersController_findOne_v1"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * List suppliers
+     * @description Returns a paginated list of suppliers. All query parameters are optional and are combined with AND. `search` matches the supplier id, name, industry and country case-insensitively.
+     */
+    get: operations['SuppliersController_findAll_v1'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/suppliers/{supplierId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/health": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Liveness probe */
-        get: operations["HealthController_check"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Get a supplier by id
+     * @description Returns the full profile of a single supplier.
+     */
+    get: operations['SuppliersController_findOne_v1'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/health': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    /** Liveness probe */
+    get: operations['HealthController_check'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        ErrorResponseDto: {
-            /** @example 404 */
-            statusCode: number;
-            /** @example Not Found */
-            error: string;
-            /**
-             * @description Human readable description, or a list of validation errors.
-             * @example Supplier with id 'sup_999' was not found.
-             */
-            message: string | string[];
-            /** @example /api/v1/suppliers/sup_999 */
-            path: string;
-            /** @example 2026-08-30T14:00:00.000Z */
-            timestamp: string;
-        };
-        SupplierRiskSummaryDto: {
-            /**
-             * @example high
-             * @enum {string}
-             */
-            level: "low" | "medium" | "high";
-            /** @example 82 */
-            score: number;
-        };
-        SupplierListItemDto: {
-            /** @example sup_001 */
-            id: string;
-            /** @example Example Supplier GmbH */
-            name: string;
-            /**
-             * @description ISO 3166-1 alpha-2 country code.
-             * @example DE
-             */
-            country: string;
-            /**
-             * @example active
-             * @enum {string}
-             */
-            status: "active" | "inactive" | "onboarding" | "offboarded";
-            risk: components["schemas"]["SupplierRiskSummaryDto"];
-        };
-        PaginationMetaDto: {
-            /**
-             * @description Current 1-based page number.
-             * @example 1
-             */
-            page: number;
-            /**
-             * @description Requested page size.
-             * @example 10
-             */
-            limit: number;
-            /**
-             * @description Total number of items matching the filters.
-             * @example 50
-             */
-            total: number;
-            /**
-             * @description Whether a following page exists.
-             * @example true
-             */
-            hasNext: boolean;
-        };
-        PaginatedSuppliersDto: {
-            data: components["schemas"]["SupplierListItemDto"][];
-            pagination: components["schemas"]["PaginationMetaDto"];
-        };
-        SupplierIdentifiersDto: {
-            /** @example DE123456789 */
-            vatNumber: string;
-            /** @example 529900EXAMPLE123456 */
-            lei: string;
-            /** @example 123456789 */
-            duns: string;
-        };
-        SupplierIdentityDto: {
-            /** @example Example Supplier GmbH */
-            name: string;
-            /** @example Example Supplier GmbH */
-            legalName: string;
-            identifiers: components["schemas"]["SupplierIdentifiersDto"];
-        };
-        CountryDto: {
-            /** @example DE */
-            code: string;
-            /** @example Germany */
-            name: string;
-        };
-        SupplierAddressDto: {
-            /** @example Hauptstraße 123 */
-            street: string;
-            /** @example Munich */
-            city: string;
-            /** @example 80331 */
-            postalCode: string;
-            country: components["schemas"]["CountryDto"];
-        };
-        SupplierContactDto: {
-            /** @example contact@example-supplier.com */
-            email: string;
-            /** @example +49 89 123456 */
-            phone: string;
-            /** @example https://example-supplier.com */
-            website: string;
-        };
-        SupplierCompanyDto: {
-            /** @example Manufacturing */
-            industry: string;
-            /** @example 250 */
-            employeeCount: number;
-            /** @example 1998 */
-            foundedYear: number;
-        };
-        AnnualSpendDto: {
-            /** @example 1250000 */
-            amount: number;
-            /**
-             * @description ISO 4217 currency code.
-             * @example EUR
-             */
-            currency: string;
-        };
-        ProcurementDto: {
-            /** @example Raw Materials */
-            category: string;
-            annualSpend: components["schemas"]["AnnualSpendDto"];
-        };
-        SupplierRelationshipDto: {
-            /**
-             * @example active
-             * @enum {string}
-             */
-            status: "active" | "inactive" | "onboarding" | "offboarded";
-            /**
-             * @description Supplier tier, 1 being the most strategic.
-             * @example 1
-             */
-            tier: number;
-            /**
-             * Format: date
-             * @example 2024-01-01
-             */
-            since: string;
-            procurement: components["schemas"]["ProcurementDto"];
-        };
-        SupplierRiskDto: {
-            /** @example 82 */
-            score: number;
-            /**
-             * @example high
-             * @enum {string}
-             */
-            level: "low" | "medium" | "high";
-            /**
-             * Format: date-time
-             * @example 2026-08-30T14:00:00Z
-             */
-            lastCalculatedAt: string;
-        };
-        SupplierAssessmentDto: {
-            /**
-             * @example completed
-             * @enum {string}
-             */
-            status: "completed" | "in_progress" | "not_started" | "expired";
-            /**
-             * @description Null until an assessment has been completed at least once.
-             * @example 84
-             */
-            score: number | null;
-            /**
-             * Format: date-time
-             * @example 2026-07-12T09:30:00Z
-             */
-            lastCompletedAt: string | null;
-            /**
-             * Format: date-time
-             * @example 2027-07-12T00:00:00Z
-             */
-            expiresAt: string | null;
-        };
-        SupplierDocumentsDto: {
-            /** @example 12 */
-            total: number;
-            /** @example 10 */
-            valid: number;
-            /** @example 2 */
-            expiringSoon: number;
-            /** @example 0 */
-            expired: number;
-        };
-        SupplierDetailDto: {
-            /** @example sup_001 */
-            id: string;
-            identity: components["schemas"]["SupplierIdentityDto"];
-            address: components["schemas"]["SupplierAddressDto"];
-            contact: components["schemas"]["SupplierContactDto"];
-            company: components["schemas"]["SupplierCompanyDto"];
-            relationship: components["schemas"]["SupplierRelationshipDto"];
-            risk: components["schemas"]["SupplierRiskDto"];
-            assessment: components["schemas"]["SupplierAssessmentDto"];
-            documents: components["schemas"]["SupplierDocumentsDto"];
-            /**
-             * Format: date-time
-             * @example 2024-01-01T10:00:00Z
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @example 2026-08-30T14:00:00Z
-             */
-            updatedAt: string;
-        };
+  schemas: {
+    ErrorResponseDto: {
+      /** @example 404 */
+      statusCode: number;
+      /** @example Not Found */
+      error: string;
+      /**
+       * @description Human readable description, or a list of validation errors.
+       * @example Supplier with id 'sup_999' was not found.
+       */
+      message: string | string[];
+      /** @example /api/v1/suppliers/sup_999 */
+      path: string;
+      /** @example 2026-08-30T14:00:00.000Z */
+      timestamp: string;
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    SupplierRiskSummaryDto: {
+      /**
+       * @example high
+       * @enum {string}
+       */
+      level: 'low' | 'medium' | 'high';
+      /** @example 82 */
+      score: number;
+    };
+    SupplierListItemDto: {
+      /** @example sup_001 */
+      id: string;
+      /** @example Example Supplier GmbH */
+      name: string;
+      /**
+       * @description ISO 3166-1 alpha-2 country code.
+       * @example DE
+       */
+      country: string;
+      /**
+       * @example active
+       * @enum {string}
+       */
+      status: 'active' | 'inactive' | 'onboarding' | 'offboarded';
+      risk: components['schemas']['SupplierRiskSummaryDto'];
+    };
+    PaginationMetaDto: {
+      /**
+       * @description Current 1-based page number.
+       * @example 1
+       */
+      page: number;
+      /**
+       * @description Requested page size.
+       * @example 10
+       */
+      limit: number;
+      /**
+       * @description Total number of items matching the filters.
+       * @example 50
+       */
+      total: number;
+      /**
+       * @description Whether a following page exists.
+       * @example true
+       */
+      hasNext: boolean;
+    };
+    PaginatedSuppliersDto: {
+      data: components['schemas']['SupplierListItemDto'][];
+      pagination: components['schemas']['PaginationMetaDto'];
+    };
+    SupplierIdentifiersDto: {
+      /** @example DE123456789 */
+      vatNumber: string;
+      /** @example 529900EXAMPLE123456 */
+      lei: string;
+      /** @example 123456789 */
+      duns: string;
+    };
+    SupplierIdentityDto: {
+      /** @example Example Supplier GmbH */
+      name: string;
+      /** @example Example Supplier GmbH */
+      legalName: string;
+      identifiers: components['schemas']['SupplierIdentifiersDto'];
+    };
+    CountryDto: {
+      /** @example DE */
+      code: string;
+      /** @example Germany */
+      name: string;
+    };
+    SupplierAddressDto: {
+      /** @example Hauptstraße 123 */
+      street: string;
+      /** @example Munich */
+      city: string;
+      /** @example 80331 */
+      postalCode: string;
+      country: components['schemas']['CountryDto'];
+    };
+    SupplierContactDto: {
+      /** @example contact@example-supplier.com */
+      email: string;
+      /** @example +49 89 123456 */
+      phone: string;
+      /** @example https://example-supplier.com */
+      website: string;
+    };
+    SupplierCompanyDto: {
+      /** @example Manufacturing */
+      industry: string;
+      /** @example 250 */
+      employeeCount: number;
+      /** @example 1998 */
+      foundedYear: number;
+    };
+    AnnualSpendDto: {
+      /** @example 1250000 */
+      amount: number;
+      /**
+       * @description ISO 4217 currency code.
+       * @example EUR
+       */
+      currency: string;
+    };
+    ProcurementDto: {
+      /** @example Raw Materials */
+      category: string;
+      annualSpend: components['schemas']['AnnualSpendDto'];
+    };
+    SupplierRelationshipDto: {
+      /**
+       * @example active
+       * @enum {string}
+       */
+      status: 'active' | 'inactive' | 'onboarding' | 'offboarded';
+      /**
+       * @description Supplier tier, 1 being the most strategic.
+       * @example 1
+       */
+      tier: number;
+      /**
+       * Format: date
+       * @example 2024-01-01
+       */
+      since: string;
+      procurement: components['schemas']['ProcurementDto'];
+    };
+    SupplierRiskDto: {
+      /** @example 82 */
+      score: number;
+      /**
+       * @example high
+       * @enum {string}
+       */
+      level: 'low' | 'medium' | 'high';
+      /**
+       * Format: date-time
+       * @example 2026-08-30T14:00:00Z
+       */
+      lastCalculatedAt: string;
+    };
+    SupplierAssessmentDto: {
+      /**
+       * @example completed
+       * @enum {string}
+       */
+      status: 'completed' | 'in_progress' | 'not_started' | 'expired';
+      /**
+       * @description Null until an assessment has been completed at least once.
+       * @example 84
+       */
+      score: number | null;
+      /**
+       * Format: date-time
+       * @example 2026-07-12T09:30:00Z
+       */
+      lastCompletedAt: string | null;
+      /**
+       * Format: date-time
+       * @example 2027-07-12T00:00:00Z
+       */
+      expiresAt: string | null;
+    };
+    SupplierDocumentsDto: {
+      /** @example 12 */
+      total: number;
+      /** @example 10 */
+      valid: number;
+      /** @example 2 */
+      expiringSoon: number;
+      /** @example 0 */
+      expired: number;
+    };
+    SupplierDetailDto: {
+      /** @example sup_001 */
+      id: string;
+      identity: components['schemas']['SupplierIdentityDto'];
+      address: components['schemas']['SupplierAddressDto'];
+      contact: components['schemas']['SupplierContactDto'];
+      company: components['schemas']['SupplierCompanyDto'];
+      relationship: components['schemas']['SupplierRelationshipDto'];
+      risk: components['schemas']['SupplierRiskDto'];
+      assessment: components['schemas']['SupplierAssessmentDto'];
+      documents: components['schemas']['SupplierDocumentsDto'];
+      /**
+       * Format: date-time
+       * @example 2024-01-01T10:00:00Z
+       */
+      createdAt: string;
+      /**
+       * Format: date-time
+       * @example 2026-08-30T14:00:00Z
+       */
+      updatedAt: string;
+    };
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    SuppliersController_findAll_v1: {
-        parameters: {
-            query?: {
-                /** @description Case-insensitive free-text search across supplier id, name, industry and country name. */
-                search?: string;
-                /** @description ISO 3166-1 alpha-2 country code. Case-insensitive. */
-                country?: string;
-                /** @description Business relationship status. */
-                status?: "active" | "inactive" | "onboarding" | "offboarded";
-                /** @description Risk band derived from the risk score. */
-                riskLevel?: "low" | "medium" | "high";
-                /** @description Latest assessment status. */
-                assessmentStatus?: "completed" | "in_progress" | "not_started" | "expired";
-                /** @description Industry, matched case-insensitively. */
-                industry?: string;
-                /** @description 1-based page number. */
-                page?: number;
-                /** @description Items per page. */
-                limit?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description A page of suppliers. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PaginatedSuppliersDto"];
-                };
-            };
-            /** @description One or more query parameters are invalid. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseDto"];
-                };
-            };
-            /** @description The `X-SESSION` header is missing or does not match the configured token. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseDto"];
-                };
-            };
-        };
+  SuppliersController_findAll_v1: {
+    parameters: {
+      query?: {
+        /** @description Case-insensitive free-text search across supplier id, name, industry and country name. */
+        search?: string;
+        /** @description ISO 3166-1 alpha-2 country code. Case-insensitive. */
+        country?: string;
+        /** @description Business relationship status. */
+        status?: 'active' | 'inactive' | 'onboarding' | 'offboarded';
+        /** @description Risk band derived from the risk score. */
+        riskLevel?: 'low' | 'medium' | 'high';
+        /** @description Latest assessment status. */
+        assessmentStatus?: 'completed' | 'in_progress' | 'not_started' | 'expired';
+        /** @description Industry, matched case-insensitively. */
+        industry?: string;
+        /** @description 1-based page number. */
+        page?: number;
+        /** @description Items per page. */
+        limit?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    SuppliersController_findOne_v1: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Unique supplier identifier. */
-                supplierId: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description A page of suppliers. */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description The requested supplier. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SupplierDetailDto"];
-                };
-            };
-            /** @description The `X-SESSION` header is missing or does not match the configured token. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseDto"];
-                };
-            };
-            /** @description No supplier exists with that id. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseDto"];
-                };
-            };
+        content: {
+          'application/json': components['schemas']['PaginatedSuppliersDto'];
         };
+      };
+      /** @description One or more query parameters are invalid. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description The `X-SESSION` header is missing or does not match the configured token. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
     };
-    HealthController_check: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description The service is up. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  SuppliersController_findOne_v1: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Unique supplier identifier. */
+        supplierId: string;
+      };
+      cookie?: never;
     };
+    requestBody?: never;
+    responses: {
+      /** @description The requested supplier. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SupplierDetailDto'];
+        };
+      };
+      /** @description The `X-SESSION` header is missing or does not match the configured token. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description No supplier exists with that id. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  HealthController_check: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The service is up. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
 }

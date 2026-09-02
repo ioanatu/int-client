@@ -1,14 +1,14 @@
-import { render, type RenderOptions, type RenderResult } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import type { ReactElement, ReactNode } from 'react'
-import { Provider } from 'react-redux'
-import { MemoryRouter } from 'react-router-dom'
-import { makeStore, type AppStore } from '../app/store'
+import { render, type RenderOptions, type RenderResult } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import type { ReactElement, ReactNode } from 'react';
+import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router-dom';
+import { type AppStore, makeStore } from '../app/store';
 
 interface RenderWithProvidersOptions extends Omit<RenderOptions, 'wrapper'> {
   /** Initial URL, so tests can enter on a detail route or with filters applied. */
-  route?: string
-  store?: AppStore
+  route?: string;
+  store?: AppStore;
 }
 
 /**
@@ -23,11 +23,11 @@ export const renderWithProviders = (
     <Provider store={store}>
       <MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>
     </Provider>
-  )
+  );
 
   return {
     store,
     user: userEvent.setup(),
     ...render(ui, { wrapper: Wrapper, ...options }),
-  }
-}
+  };
+};

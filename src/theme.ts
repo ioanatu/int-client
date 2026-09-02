@@ -1,5 +1,5 @@
-import { createTheme, type Theme } from '@mui/material/styles'
-import type { ThemeMode } from './features/ui/uiSlice'
+import { createTheme, type Theme } from '@mui/material/styles';
+import type { ThemeMode } from './features/ui/uiSlice';
 
 /** Single source of truth for the MUI theme, rebuilt when the colour mode changes. */
 export const buildTheme = (mode: ThemeMode): Theme =>
@@ -19,4 +19,4 @@ export const buildTheme = (mode: ThemeMode): Theme =>
       MuiCard: { defaultProps: { variant: 'outlined' } },
       MuiTableCell: { styleOverrides: { head: { fontWeight: 600 } } },
     },
-  })
+  });

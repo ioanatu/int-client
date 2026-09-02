@@ -1,4 +1,4 @@
-import type { PaginatedSuppliers, SupplierDetail, SupplierListItem } from '../api/types'
+import type { PaginatedSuppliers, SupplierDetail, SupplierListItem } from '../api/types';
 
 // Typing the fixtures with the generated contracts means a backend schema change breaks
 // the tests at compile time rather than silently drifting from reality.
@@ -8,7 +8,7 @@ export const supplierListItem: SupplierListItem = {
   country: 'DE',
   status: 'active',
   risk: { level: 'high', score: 82 },
-}
+};
 
 export const secondSupplierListItem: SupplierListItem = {
   id: 'sup_002',
@@ -16,12 +16,12 @@ export const secondSupplierListItem: SupplierListItem = {
   country: 'SE',
   status: 'onboarding',
   risk: { level: 'low', score: 21 },
-}
+};
 
 export const suppliersPage: PaginatedSuppliers = {
   data: [supplierListItem, secondSupplierListItem],
   pagination: { page: 1, limit: 10, total: 2, hasNext: false },
-}
+};
 
 export const supplierDetail: SupplierDetail = {
   id: 'sup_001',
@@ -61,4 +61,4 @@ export const supplierDetail: SupplierDetail = {
   documents: { total: 12, valid: 10, expiringSoon: 2, expired: 0 },
   createdAt: '2024-01-01T10:00:00Z',
   updatedAt: '2026-08-30T14:00:00Z',
-}
+};

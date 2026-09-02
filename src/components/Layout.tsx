@@ -1,19 +1,19 @@
-import DarkModeIcon from '@mui/icons-material/DarkMode'
-import LightModeIcon from '@mui/icons-material/LightMode'
-import AppBar from '@mui/material/AppBar'
-import Container from '@mui/material/Container'
-import IconButton from '@mui/material/IconButton'
-import Toolbar from '@mui/material/Toolbar'
-import Tooltip from '@mui/material/Tooltip'
-import Typography from '@mui/material/Typography'
-import { Link as RouterLink, Outlet } from 'react-router-dom'
-import { useAppDispatch, useAppSelector } from '../app/hooks'
-import { selectThemeMode, themeModeToggled } from '../features/ui/uiSlice'
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import AppBar from '@mui/material/AppBar';
+import Container from '@mui/material/Container';
+import IconButton from '@mui/material/IconButton';
+import Toolbar from '@mui/material/Toolbar';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
+import { Link as RouterLink, Outlet } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { selectThemeMode, themeModeToggled } from '../features/ui/uiSlice';
 
 export const Layout = () => {
-  const dispatch = useAppDispatch()
-  const themeMode = useAppSelector(selectThemeMode)
-  const nextMode = themeMode === 'light' ? 'dark' : 'light'
+  const dispatch = useAppDispatch();
+  const themeMode = useAppSelector(selectThemeMode);
+  const nextMode = themeMode === 'light' ? 'dark' : 'light';
 
   return (
     <>
@@ -43,5 +43,5 @@ export const Layout = () => {
         <Outlet />
       </Container>
     </>
-  )
-}
+  );
+};

@@ -1,7 +1,7 @@
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Typography from '@mui/material/Typography'
-import { Link as RouterLink } from 'react-router-dom'
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import { Link as RouterLink } from 'react-router-dom';
 
 export const NotFoundPage = () => (
   <Box sx={{ py: 8, textAlign: 'center' }}>
@@ -15,4 +15,4 @@ export const NotFoundPage = () => (
       Go to suppliers
     </Button>
   </Box>
-)
+);
