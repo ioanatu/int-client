@@ -23,6 +23,15 @@ jobs:
         run: yarn install
         shell: bash
 
+      - name: Perform linting
+        run: yarn lint
+
+      - name: Perform formatting
+        run: yarn format
+
+      - name: Run tests
+        run: yarn test:run
+
       - name: Build App
         run: yarn build
         env:

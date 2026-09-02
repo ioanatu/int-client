@@ -11,16 +11,18 @@ React client for the [IntNext PoC API](../int-server).
 The client needs the backend running and a session token.
 
 ```bash
-# 1. Start the backend (in another terminal)
-cd ../int-server && npm run start:dev
 
-# 2. Configure this client
-cp .env.example .env          # then set SESSION_TOKEN to the backend's own token
+# 1. Configure the client
+cp .env.example .env          # set SESSION_TOKEN to the backend's own token
 
-# 3. Install and run
+# 2. Install and run
 corepack enable               # once per machine — the repo pins Yarn 4 via `packageManager`
 yarn install
 yarn dev                      # http://localhost:5173
+
+#(optional) Run the client against the local backend server
+# Start the backend (in another terminal)
+cd ../int-server && npm run start:dev
 ```
 
 ### Authentication
@@ -28,20 +30,6 @@ yarn dev                      # http://localhost:5173
 Every `/api/**` request must carry an `X-SESSION` header. The Vite dev server proxies
 `/api` to the backend and injects that header from `SESSION_TOKEN` (see `vite.config.ts`),
 so **the secret stays in the dev-server process and never ships in the browser bundle**.
-
-For a build that has to reach the backend directly, `VITE_API_URL` and
-`VITE_SESSION_TOKEN` are honoured instead — but note that anything prefixed `VITE_` is
-inlined into the bundle and is therefore public. In a real deployment the token belongs
-behind a backend-for-frontend or a reverse proxy, not in the client.
-
-| Variable             | Where it runs     | Purpose                                      |
-| -------------------- | ----------------- | -------------------------------------------- |
-| `API_PROXY_TARGET`   | dev server (Node) | Backend origin to proxy `/api` to            |
-| `SESSION_TOKEN`      | dev server (Node) | Injected as `X-SESSION` on proxied requests  |
-| `VITE_API_URL`       | browser           | Bypass the proxy and call the API directly   |
-| `VITE_SESSION_TOKEN` | browser           | Session token for that direct call (public!) |
-
----
 
 ## Scripts
 
@@ -54,7 +42,8 @@ behind a backend-for-frontend or a reverse proxy, not in the client.
 | `yarn test:run`       | Vitest once (CI mode)                                       |
 | `yarn test:ui`        | Vitest browser UI                                           |
 | `yarn coverage`       | Vitest with a v8 coverage report                            |
-| `yarn lint`           | oxlint, including the `jsx-a11y` accessibility rules        |
+| `yarn lint`           | eslint, including the `jsx-a11y` accessibility rules        |
+| `yarn format`         | Formats with prettier                                       |
 | `yarn generate:types` | Regenerate `src/api/schema.d.ts` from the backend's OpenAPI |
 
 ---
@@ -63,7 +52,7 @@ behind a backend-for-frontend or a reverse proxy, not in the client.
 
 `src/api/schema.d.ts` is **generated**, never hand-edited. It is produced by
 [`openapi-typescript`](https://github.com/openapi-ts/openapi-typescript) from the OpenAPI
-document the Nest backend serves at `/api-docs-json`:
+document the NestJS backend serves at `/api-docs-json`:
 
 ```bash
 # backend running on :3000
@@ -141,16 +130,3 @@ yarn test:run
 Covered: cache reuse across repeated queries, list rendering, URL-driven filtering, the
 empty state, error state with retry, list → detail navigation, the detail profile, the 404
 path, error-message extraction and the formatters.
-
----
-
-## Notes and trade-offs
-
-- **Yarn 4** is pinned through `packageManager` in `package.json` (Corepack), so no Yarn
-  binary is vendored into the repository. `nodeLinker: node-modules` keeps a conventional
-  `node_modules` tree rather than PnP.
-- **oxlint** ships with the current Vite template in place of ESLint; the `jsx-a11y`
-  plugin is enabled on it for the accessibility rules.
-- The API also supports an `industry` filter, which is an exact (case-insensitive) match.
-  It is left out of the filter bar because a free-text field for an exact match is a trap;
-  it would want a dropdown fed by a distinct-industries endpoint the API does not expose.

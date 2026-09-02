@@ -9,7 +9,7 @@ import prettierConfig from 'eslint-config-prettier/flat';
 
 export default tseslint.config(
   {
-    ignores: ['dist', '.yarn', 'coverage'],
+    ignores: ['dist', '.yarn', 'coverage', 'src/api/schema.d.ts'],
   },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
@@ -47,7 +47,6 @@ export default tseslint.config(
       'arrow-body-style': 'off',
       'max-len': 'off',
       'implicit-arrow-linebreak': 'off',
-      'react-hooks/rules-of-hooks': 'off',
       'no-console': 'error',
       'simple-import-sort/imports': [
         'error',
