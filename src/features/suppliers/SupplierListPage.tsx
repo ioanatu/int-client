@@ -17,6 +17,7 @@ import { EmptyState, ErrorState, LoadingState } from '../../components/QueryStat
 import { RelationshipStatusChip, RiskChip } from '../../components/StatusChips';
 import { SupplierFilters } from './SupplierFilters';
 import { PAGE_SIZE_OPTIONS, useSupplierListParams } from './useSupplierListParams';
+import { Button } from '@ioanatu/component-library';
 
 export const SupplierListPage = () => {
   const navigate = useNavigate();
@@ -29,6 +30,7 @@ export const SupplierListPage = () => {
 
   return (
     <Box>
+      <Button label="Test button" onClick={() => console.log('testing button component')} />
       <Typography variant="h1" gutterBottom>
         Suppliers
       </Typography>

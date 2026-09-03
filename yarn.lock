@@ -701,6 +701,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ioanatu/component-library@npm:1.0.5":
+  version: 1.0.5
+  resolution: "@ioanatu/component-library@npm:1.0.5::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40ioanatu%2Fcomponent-library%2F1.0.5%2F1917b295d8c8016c18427607af1193892f26c4ba"
+  peerDependencies:
+    "@types/react": ^19.2.14
+    "@types/react-dom": ^19.2.3
+    react: ^19.2.6
+    react-dom: ^19.2.6
+  checksum: 10/455067b22c816c250a06afb4f6a441805f00cc2f3c00caecc8a438f97162a54da712e5f513c09ac10330238499e8e262bf9cba404c3fab7f00686d363543540b
+  languageName: node
+  linkType: hard
+
 "@isaacs/fs-minipass@npm:^4.0.0":
   version: 4.0.1
   resolution: "@isaacs/fs-minipass@npm:4.0.1"
@@ -3342,6 +3354,7 @@ __metadata:
     "@emotion/react": "npm:^11.14.0"
     "@emotion/styled": "npm:^11.14.1"
     "@eslint/js": "npm:^10.0.1"
+    "@ioanatu/component-library": "npm:1.0.5"
     "@mui/icons-material": "npm:^9.4.0"
     "@mui/material": "npm:^9.4.0"
     "@reduxjs/toolkit": "npm:^2.12.0"
