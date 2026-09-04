@@ -1,6 +1,5 @@
 /**
- * Hand-friendly aliases over the types generated from the backend's OpenAPI document
- * (`src/api/schema.d.ts`, produced by `yarn generate:types`).
+ * Aliases using the types generated from the backend's OpenAPI document.
  *
  * Nothing in the app should reach into `schema.d.ts` directly: every contract the client
  * depends on is named here, so a backend change surfaces as a type error in one file.
@@ -22,7 +21,7 @@ export type RelationshipStatus = SupplierListItem['status'];
 export type RiskLevel = SupplierListItem['risk']['level'];
 export type AssessmentStatus = NonNullable<ListSuppliersQuery['assessmentStatus']>;
 
-// `satisfies` keeps these in step with the generated unions: dropping or renaming a value
+// `satisfies` keeps these in sync with the generated unions: dropping or renaming a value
 // on the backend turns the corresponding entry below into a compile error.
 export const RELATIONSHIP_STATUSES = [
   'active',

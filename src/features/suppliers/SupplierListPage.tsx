@@ -9,15 +9,15 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
+import { Button } from '@ioanatu/component-library';
 import Typography from '@mui/material/Typography';
 import { useNavigate } from 'react-router-dom';
 import { getErrorMessage } from '../../api/errors';
 import { useListSuppliersQuery } from '../../api/suppliersApi';
 import { EmptyState, ErrorState, LoadingState } from '../../components/QueryStates';
-import { RelationshipStatusChip, RiskChip } from '../../components/StatusChips';
 import { SupplierFilters } from './SupplierFilters';
 import { PAGE_SIZE_OPTIONS, useSupplierListParams } from './useSupplierListParams';
-import { Button } from '@ioanatu/component-library';
+import { RiskLabel, RelationshipStatusLabel } from '../../components/Labels';
 
 export const SupplierListPage = () => {
   const navigate = useNavigate();
@@ -108,10 +108,10 @@ export const SupplierListPage = () => {
                       </TableCell>
                       <TableCell>{supplier.country}</TableCell>
                       <TableCell>
-                        <RelationshipStatusChip status={supplier.status} />
+                        <RelationshipStatusLabel status={supplier.status} />
                       </TableCell>
                       <TableCell>
-                        <RiskChip level={supplier.risk.level} score={supplier.risk.score} />
+                        <RiskLabel level={supplier.risk.level} score={supplier.risk.score} />
                       </TableCell>
                     </TableRow>
                   ))}

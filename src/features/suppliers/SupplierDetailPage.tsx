@@ -12,11 +12,7 @@ import { Link as RouterLink, useParams } from 'react-router-dom';
 import { getErrorMessage, getErrorStatus } from '../../api/errors';
 import { useGetSupplierQuery } from '../../api/suppliersApi';
 import { ErrorState, LoadingState } from '../../components/QueryStates';
-import {
-  AssessmentStatusChip,
-  RelationshipStatusChip,
-  RiskChip,
-} from '../../components/StatusChips';
+import { AssessmentStatusChip, RiskLabel, RelationshipStatusLabel } from '../../components/Labels';
 import { formatCurrency, formatDate, formatDateTime, formatNumber } from '../../utils/format';
 
 const Field = ({ label, children }: { label: string; children: ReactNode }) => (
@@ -113,8 +109,8 @@ export const SupplierDetailPage = () => {
           </Typography>
         </Box>
         <Stack direction="row" spacing={1}>
-          <RelationshipStatusChip status={relationship.status} />
-          <RiskChip level={risk.level} score={risk.score} />
+          <RelationshipStatusLabel status={relationship.status} />
+          <RiskLabel level={risk.level} score={risk.score} />
         </Stack>
       </Stack>
 
@@ -149,7 +145,7 @@ export const SupplierDetailPage = () => {
 
         <Section title="Relationship">
           <Field label="Status">
-            <RelationshipStatusChip status={relationship.status} />
+            <RelationshipStatusLabel status={relationship.status} />
           </Field>
           <Field label="Tier">{relationship.tier}</Field>
           <Field label="Supplier since">{formatDate(relationship.since)}</Field>
@@ -164,7 +160,7 @@ export const SupplierDetailPage = () => {
 
         <Section title="Risk & assessment">
           <Field label="Risk">
-            <RiskChip level={risk.level} score={risk.score} />
+            <RiskLabel level={risk.level} score={risk.score} />
           </Field>
           <Field label="Risk last calculated">{formatDateTime(risk.lastCalculatedAt)}</Field>
           <Field label="Assessment status">

@@ -2,13 +2,16 @@
 
 React client for the [IntNext PoC API](../int-server).
 
-**Stack:** React 19 · TypeScript · Redux Toolkit (RTK Query) · Vite · Material UI · Vitest
+**Stack:** React 19 · TypeScript · Redux Toolkit (RTK Query) · Material UI · Vite · Vitest
 
 ---
 
-## Quick start
+## Prerequisites
 
-The client needs the backend running and a session token.
+Every `/api/**` request must carry an `X-SESSION` header. The Vite dev server proxies
+`/api` to the backend and injects that header from `SESSION_TOKEN` (see `vite.config.ts`).
+
+## Quick start
 
 ```bash
 
@@ -25,25 +28,20 @@ yarn dev                      # http://localhost:5173
 cd ../int-server && npm run start:dev
 ```
 
-### Authentication
-
-Every `/api/**` request must carry an `X-SESSION` header. The Vite dev server proxies
-`/api` to the backend and injects that header from `SESSION_TOKEN` (see `vite.config.ts`),
-so **the secret stays in the dev-server process and never ships in the browser bundle**.
-
 ## Scripts
 
 | Command               | What it does                                                |
 | --------------------- | ----------------------------------------------------------- |
 | `yarn dev`            | Dev server on `:5173` with the `/api` proxy                 |
 | `yarn build`          | `tsc --noEmit` then a production build into `dist/`         |
-| `yarn preview`        | Serve the production build                                  |
+| `yarn preview`        | Serve the production buil locally                           |
 | `yarn test`           | Vitest in watch mode                                        |
 | `yarn test:run`       | Vitest once (CI mode)                                       |
 | `yarn test:ui`        | Vitest browser UI                                           |
 | `yarn coverage`       | Vitest with a v8 coverage report                            |
 | `yarn lint`           | eslint, including the `jsx-a11y` accessibility rules        |
 | `yarn format`         | Formats with prettier                                       |
+| `yarn format:check`   | Checks formatting with prettier                             |
 | `yarn generate:types` | Regenerate `src/api/schema.d.ts` from the backend's OpenAPI |
 
 ---
@@ -121,12 +119,8 @@ src/
 Vitest + React Testing Library, with [MSW](https://mswjs.io) intercepting HTTP so the real
 RTK Query stack (including its cache and error handling) runs in every test. The fixtures
 in `src/test/fixtures.ts` are typed with the generated backend contracts, so they cannot
-drift from the API.
+differ from the API.
 
 ```bash
 yarn test:run
 ```
-
-Covered: cache reuse across repeated queries, list rendering, URL-driven filtering, the
-empty state, error state with retry, list → detail navigation, the detail profile, the 404
-path, error-message extraction and the formatters.
