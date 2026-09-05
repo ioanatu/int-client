@@ -6,6 +6,15 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
+    build: {
+      rolldownOptions: {
+        output: {
+          manualChunks(id: string) {
+            if (/node_modules\/(@mui|@emotion|@popperjs|stylis)/.test(id)) return 'ui';
+          },
+        },
+      },
+    },
     define: {
       'process.env.VITE_API_URL': JSON.stringify(env.VITE_API_URL),
       'process.env.VITE_SESSION_TOKEN': JSON.stringify(env.VITE_SESSION_TOKEN),
