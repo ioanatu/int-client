@@ -1,7 +1,7 @@
+import { Card as PrettyCard } from '@ioanatu/component-library';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import { Card as PrettyCard } from '@ioanatu/component-library';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Divider from '@mui/material/Divider';
