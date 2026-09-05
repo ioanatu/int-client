@@ -701,15 +701,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ioanatu/component-library@npm:1.0.9":
-  version: 1.0.9
-  resolution: "@ioanatu/component-library@npm:1.0.9::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40ioanatu%2Fcomponent-library%2F1.0.9%2F7f894005dafd0dfda863a74d4a4028140e6dd835"
+"@ioanatu/component-library@npm:1.0.10":
+  version: 1.0.10
+  resolution: "@ioanatu/component-library@npm:1.0.10::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40ioanatu%2Fcomponent-library%2F1.0.10%2F97cf15086739aeb07ac5ba217659ef99170ea4c6"
   peerDependencies:
     "@types/react": ^19.2.14
     "@types/react-dom": ^19.2.3
     react: ^19.2.6
     react-dom: ^19.2.6
-  checksum: 10/5e4b4bb84ab4dea3bc6232db79337c4607c223ff13d83bd3274c3b9d64bc9488e375e8894d38f0c1d38355484a57f7e97fbe62b89858e4bc69161fd9ae652bcc
+  checksum: 10/d5ba1540f538f51cce74c13ecb025ca08b3027d584e087a4048d2efbd50c08ca481f30ad53e8f495edaa333e2c7e95bd39603f9ace0bbf0f09f406659865b179
   languageName: node
   linkType: hard
 
@@ -3354,7 +3354,7 @@ __metadata:
     "@emotion/react": "npm:^11.14.0"
     "@emotion/styled": "npm:^11.14.1"
     "@eslint/js": "npm:^10.0.1"
-    "@ioanatu/component-library": "npm:1.0.9"
+    "@ioanatu/component-library": "npm:1.0.10"
     "@mui/icons-material": "npm:^9.4.0"
     "@mui/material": "npm:^9.4.0"
     "@reduxjs/toolkit": "npm:^2.12.0"

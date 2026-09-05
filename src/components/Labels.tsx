@@ -2,30 +2,30 @@ import { Chip } from '@ioanatu/component-library';
 import type { AssessmentStatus, RelationshipStatus, RiskLevel } from '../api/types';
 import { humanizeEnum } from '../utils/format';
 
-type ChipVariant = 'primary' | 'success' | 'secondary' | 'danger' | 'accent';
+type ChipVariant = 'error' | 'default' | 'success' | 'info' | 'warning';
 
 const RELATIONSHIP_COLORS: Record<RelationshipStatus, ChipVariant> = {
-  active: 'accent',
+  active: 'default',
   onboarding: 'success',
-  inactive: 'secondary',
-  offboarded: 'primary',
+  inactive: 'warning',
+  offboarded: 'info',
 };
 
 const RISK_COLORS: Record<RiskLevel, ChipVariant> = {
   low: 'success',
-  medium: 'secondary',
-  high: 'danger',
+  medium: 'info',
+  high: 'error',
 };
 
 const ASSESSMENT_COLORS: Record<AssessmentStatus, ChipVariant> = {
   completed: 'success',
-  in_progress: 'secondary',
-  not_started: 'primary',
-  expired: 'danger',
+  in_progress: 'default',
+  not_started: 'info',
+  expired: 'error',
 };
 
 export const RelationshipStatusLabel = ({ status }: { status: RelationshipStatus }) => (
-  <Chip label={humanizeEnum(status)} variant={RELATIONSHIP_COLORS[status]} />
+  <Chip label={humanizeEnum(status)} variant={RELATIONSHIP_COLORS[status]} fill="filled" />
 );
 
 export const RiskLabel = ({ level, score }: { level: RiskLevel; score?: number }) => (
@@ -36,5 +36,5 @@ export const RiskLabel = ({ level, score }: { level: RiskLevel; score?: number }
 );
 
 export const AssessmentStatusChip = ({ status }: { status: AssessmentStatus }) => (
-  <Chip label={humanizeEnum(status)} variant={ASSESSMENT_COLORS[status]} />
+  <Chip label={humanizeEnum(status)} variant={ASSESSMENT_COLORS[status]} fill="filled" />
 );

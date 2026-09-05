@@ -1,6 +1,7 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import { Card as PrettyCard } from '@ioanatu/component-library';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Divider from '@mui/material/Divider';
@@ -115,7 +116,7 @@ export const SupplierDetailPage = () => {
       </Stack>
 
       <Stack spacing={3}>
-        <Section title="Identity">
+        <PrettyCard title="Identity">
           <Field label="Legal name">{identity.legalName}</Field>
           <Field label="Industry">{company.industry}</Field>
           <Field label="VAT number">{identity.identifiers.vatNumber}</Field>
@@ -123,7 +124,7 @@ export const SupplierDetailPage = () => {
           <Field label="DUNS">{identity.identifiers.duns}</Field>
           <Field label="Employees">{formatNumber(company.employeeCount)}</Field>
           <Field label="Founded">{company.foundedYear}</Field>
-        </Section>
+        </PrettyCard>
 
         <Section title="Contact">
           <Field label="Address">
@@ -143,7 +144,7 @@ export const SupplierDetailPage = () => {
           </Field>
         </Section>
 
-        <Section title="Relationship">
+        <PrettyCard title="Relationship">
           <Field label="Status">
             <RelationshipStatusLabel status={relationship.status} />
           </Field>
@@ -156,9 +157,9 @@ export const SupplierDetailPage = () => {
               relationship.procurement.annualSpend.currency,
             )}
           </Field>
-        </Section>
+        </PrettyCard>
 
-        <Section title="Risk & assessment">
+        <PrettyCard title="Risk & assessment">
           <Field label="Risk">
             <RiskLabel level={risk.level} score={risk.score} />
           </Field>
@@ -169,14 +170,14 @@ export const SupplierDetailPage = () => {
           <Field label="Assessment score">{formatNumber(assessment.score)}</Field>
           <Field label="Last completed">{formatDateTime(assessment.lastCompletedAt)}</Field>
           <Field label="Expires">{formatDateTime(assessment.expiresAt)}</Field>
-        </Section>
+        </PrettyCard>
 
-        <Section title="Documents">
+        <PrettyCard title="Documents">
           <Field label="Total">{formatNumber(documents.total)}</Field>
           <Field label="Valid">{formatNumber(documents.valid)}</Field>
           <Field label="Expiring soon">{formatNumber(documents.expiringSoon)}</Field>
           <Field label="Expired">{formatNumber(documents.expired)}</Field>
-        </Section>
+        </PrettyCard>
 
         <Typography variant="caption" color="text.secondary">
           Created {formatDateTime(supplier.createdAt)} · Updated{' '}
