@@ -44,6 +44,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/industries': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List industries
+     * @description Returns every industry present in the supplier data, with the number of suppliers in each. Intended to populate an industry filter: pass an entry `id` as the `industry` query parameter on `GET /api/v1/suppliers`. The list is unpaginated — it is a small, closed set.
+     */
+    get: operations['IndustriesController_findAll_v1'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/health': {
     parameters: {
       query?: never;
@@ -278,6 +298,32 @@ export interface components {
        */
       updatedAt: string;
     };
+    IndustryDto: {
+      /**
+       * @description Stable, URL-safe identifier. Pass this verbatim as the `industry` filter on `GET /api/v1/suppliers`.
+       * @example food-beverage
+       */
+      id: string;
+      /**
+       * @description Display name, as stored on the supplier.
+       * @example Food & Beverage
+       */
+      name: string;
+      /**
+       * @description How many suppliers currently sit in this industry.
+       * @example 5
+       */
+      supplierCount: number;
+    };
+    IndustryListDto: {
+      /** @description Industries, sorted by name. */
+      data: components['schemas']['IndustryDto'][];
+      /**
+       * @description Number of distinct industries.
+       * @example 14
+       */
+      total: number;
+    };
   };
   responses: never;
   parameters: never;
@@ -300,7 +346,7 @@ export interface operations {
         riskLevel?: 'low' | 'medium' | 'high';
         /** @description Latest assessment status. */
         assessmentStatus?: 'completed' | 'in_progress' | 'not_started' | 'expired';
-        /** @description Industry, matched case-insensitively. */
+        /** @description Industry to filter by. Accepts either the `id` from `GET /api/v1/industries` (recommended — URL-safe) or the display name. Case-insensitive. */
         industry?: string;
         /** @description 1-based page number. */
         page?: number;
@@ -374,6 +420,44 @@ export interface operations {
       };
       /** @description No supplier exists with that id. */
       404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  IndustriesController_findAll_v1: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description All known industries, sorted by name. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['IndustryListDto'];
+        };
+      };
+      /** @description The endpoint takes no query parameters. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description The `X-SESSION` header is missing or does not match the configured token. */
+      401: {
         headers: {
           [name: string]: unknown;
         };

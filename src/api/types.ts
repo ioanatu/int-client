@@ -11,11 +11,15 @@ export type SupplierDetail = components['schemas']['SupplierDetailDto'];
 export type PaginatedSuppliers = components['schemas']['PaginatedSuppliersDto'];
 export type PaginationMeta = components['schemas']['PaginationMetaDto'];
 export type ApiErrorResponse = components['schemas']['ErrorResponseDto'];
+export type Industry = components['schemas']['IndustryDto'];
+export type IndustryList = components['schemas']['IndustryListDto'];
 
 /** Query string accepted by `GET /api/v1/suppliers`. */
 export type ListSuppliersQuery = NonNullable<
   operations['SuppliersController_findAll_v1']['parameters']['query']
 >;
+
+export type Search = ListSuppliersQuery['search'];
 
 export type RelationshipStatus = SupplierListItem['status'];
 export type RiskLevel = SupplierListItem['risk']['level'];

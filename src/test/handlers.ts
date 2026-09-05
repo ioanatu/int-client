@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw';
 import type { ApiErrorResponse } from '../api/types';
-import { supplierDetail, suppliersPage } from './fixtures';
+import { industryList, supplierDetail, supplierIndustries, suppliersPage } from './fixtures';
 
 /** Absolute so it matches the base URL the tests configure (see `vitest.config.ts`). */
 export const API_BASE = 'http://localhost:3000/api/v1';
@@ -18,16 +18,19 @@ export const handlers = [
   http.get(`${API_BASE}/suppliers`, ({ request }) => {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search')?.toLowerCase();
+    const industry = searchParams.get('industry')?.toLowerCase();
 
-    const data = search
-      ? suppliersPage.data.filter((supplier) => supplier.name.toLowerCase().includes(search))
-      : suppliersPage.data;
+    const data = suppliersPage.data
+      .filter((supplier) => !search || supplier.name.toLowerCase().includes(search))
+      .filter((supplier) => !industry || supplierIndustries[supplier.id] === industry);
 
     return HttpResponse.json({
       data,
       pagination: { ...suppliersPage.pagination, total: data.length },
     });
   }),
+
+  http.get(`${API_BASE}/industries`, () => HttpResponse.json(industryList)),
 
   http.get(`${API_BASE}/suppliers/:supplierId`, ({ params }) => {
     if (params.supplierId !== supplierDetail.id) {

@@ -11,8 +11,8 @@ import type { ReactNode } from 'react';
 import { Link as RouterLink, useParams } from 'react-router-dom';
 import { getErrorMessage, getErrorStatus } from '../../api/errors';
 import { useGetSupplierQuery } from '../../api/suppliersApi';
+import { AssessmentStatusChip, RelationshipStatusLabel, RiskLabel } from '../../components/Labels';
 import { ErrorState, LoadingState } from '../../components/QueryStates';
-import { AssessmentStatusChip, RiskLabel, RelationshipStatusLabel } from '../../components/Labels';
 import { formatCurrency, formatDate, formatDateTime, formatNumber } from '../../utils/format';
 
 const Field = ({ label, children }: { label: string; children: ReactNode }) => (

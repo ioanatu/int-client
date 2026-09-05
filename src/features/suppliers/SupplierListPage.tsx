@@ -9,15 +9,14 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import { Button } from '@ioanatu/component-library';
 import Typography from '@mui/material/Typography';
 import { useNavigate } from 'react-router-dom';
 import { getErrorMessage } from '../../api/errors';
 import { useListSuppliersQuery } from '../../api/suppliersApi';
+import { RelationshipStatusLabel, RiskLabel } from '../../components/Labels';
 import { EmptyState, ErrorState, LoadingState } from '../../components/QueryStates';
 import { SupplierFilters } from './SupplierFilters';
 import { PAGE_SIZE_OPTIONS, useSupplierListParams } from './useSupplierListParams';
-import { RiskLabel, RelationshipStatusLabel } from '../../components/Labels';
 
 export const SupplierListPage = () => {
   const navigate = useNavigate();
@@ -30,12 +29,8 @@ export const SupplierListPage = () => {
 
   return (
     <Box>
-      <Button label="Test button" onClick={() => console.log('testing button component')} />
       <Typography variant="h1" gutterBottom>
         Suppliers
-      </Typography>
-      <Typography color="text.secondary" sx={{ mb: 3 }}>
-        Browse the supplier master data served by the IntNext API.
       </Typography>
 
       <SupplierFilters
@@ -45,17 +40,15 @@ export const SupplierListPage = () => {
         hasFilters={hasFilters}
       />
 
-      {/* `isLoading` is only true without cached data; a refetch keeps the table on screen
-          and reports itself through the thin progress bar instead. */}
-      {isLoading ? <LoadingState label="Loading suppliers…" /> : null}
+      {isLoading && <LoadingState label="Loading suppliers…" />}
 
-      {error ? (
+      {error && (
         <ErrorState
           title="Could not load suppliers"
           message={getErrorMessage(error)}
           onRetry={() => void refetch()}
         />
-      ) : null}
+      )}
 
       {!isLoading && !error ? (
         <Paper variant="outlined">
@@ -63,7 +56,7 @@ export const SupplierListPage = () => {
             <LinearProgress aria-label="Refreshing suppliers" />
           </Fade>
 
-          {suppliers.length === 0 ? (
+          {!suppliers.length ? (
             <EmptyState
               message={
                 hasFilters ? 'No suppliers match these filters.' : 'The API returned no suppliers.'

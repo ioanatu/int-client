@@ -1,18 +1,22 @@
-import ClearIcon from '@mui/icons-material/Clear';
+import { Button } from '@ioanatu/component-library';
 import SearchIcon from '@mui/icons-material/Search';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
 import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { useEffect, useState } from 'react';
+import { getErrorMessage } from '../../api/errors';
+import { useListIndustriesQuery } from '../../api/suppliersApi';
 import {
   ASSESSMENT_STATUSES,
   type ListSuppliersQuery,
   RELATIONSHIP_STATUSES,
   RISK_LEVELS,
+  type Search,
 } from '../../api/types';
-import { humanizeEnum } from '../../utils/format';
+import { formatNumber, humanizeEnum } from '../../utils/format';
 
 const SEARCH_DEBOUNCE_MS = 300;
 
@@ -31,27 +35,46 @@ export const SupplierFilters = ({
   onClear,
   hasFilters,
 }: SupplierFiltersProps) => {
-  // The text field stays responsive while the debounced value drives the request.
-  const [search, setSearch] = useState(query.search ?? '');
-  const [lastAppliedSearch, setLastAppliedSearch] = useState(query.search);
+  const [search, setSearch] = useState<Search>(query.search ?? '');
+  const [lastAppliedSearch, setLastAppliedSearch] = useState<Search>(query.search);
+  const [isIndustryMenuOpened, setIsIndustryMenuOpened] = useState<boolean>(false);
 
-  // Adjusting state during render (rather than in an effect) is React's recommended way to
-  // resync with a changed prop — it keeps the input in step with back/forward navigation.
   if (query.search !== lastAppliedSearch) {
     setLastAppliedSearch(query.search);
     setSearch(query.search ?? '');
   }
 
   useEffect(() => {
-    if (search === (query.search ?? '')) {
-      return;
-    }
+    if (search === (query.search ?? '') || search === undefined) return;
+
     const timer = setTimeout(
       () => onFilterChange('search', search.trim() || undefined),
       SEARCH_DEBOUNCE_MS,
     );
     return () => clearTimeout(timer);
   }, [search, query.search, onFilterChange]);
+
+  const {
+    data: industryList,
+    isFetching: isLoadingIndustries,
+    error: industriesError,
+    refetch: refetchIndustries,
+  } = useListIndustriesQuery(undefined, {
+    skip: !isIndustryMenuOpened && !query.industry,
+  });
+
+  const handleIndustryMenuOpen = () => {
+    setIsIndustryMenuOpened(true);
+    if (industriesError) refetchIndustries();
+  };
+
+  const industries = industryList?.data ?? [];
+  const selectedIndustry = query.industry ?? '';
+  const isIndustryQueryWrong =
+    selectedIndustry !== '' && !industries.some(({ id }) => id === selectedIndustry);
+
+  const renderIndustryValue = (value: unknown): string =>
+    industries.find(({ id }) => id === value)?.name ?? String(value);
 
   return (
     <Box
@@ -62,7 +85,7 @@ export const SupplierFilters = ({
       <TextField
         size="small"
         label="Search"
-        placeholder="Name, id, industry or country"
+        placeholder="Name or id"
         value={search}
         onChange={(event) => setSearch(event.target.value)}
         sx={{ minWidth: 260, flexGrow: 1 }}
@@ -79,11 +102,50 @@ export const SupplierFilters = ({
 
       <TextField
         {...selectProps}
+        label="Industry"
+        value={!isIndustryQueryWrong ? selectedIndustry : ''}
+        onChange={(event) => onFilterChange('industry', event.target.value || undefined)}
+        slotProps={{
+          select: { onOpen: handleIndustryMenuOpen, renderValue: renderIndustryValue },
+        }}
+      >
+        {isLoadingIndustries && (
+          <MenuItem disabled>
+            <CircularProgress size={16} sx={{ mr: 1 }} aria-hidden />
+            Loading industries…
+          </MenuItem>
+        )}
+
+        {industriesError && (
+          <MenuItem disabled sx={{ display: 'block', whiteSpace: 'normal', maxWidth: 280 }}>
+            <Typography variant="body2">{getErrorMessage(industriesError)}</Typography>
+            <Typography variant="caption" color="text.secondary">
+              Close and reopen to try again.
+            </Typography>
+          </MenuItem>
+        )}
+
+        {industries.map((industry) => (
+          <MenuItem key={industry.id} value={industry.id}>
+            {industry.name}
+            <Typography
+              component="span"
+              variant="caption"
+              color="text.secondary"
+              sx={{ ml: 'auto', pl: 2 }}
+            >
+              {formatNumber(industry.supplierCount)}
+            </Typography>
+          </MenuItem>
+        ))}
+      </TextField>
+
+      <TextField
+        {...selectProps}
         label="Status"
         value={query.status ?? ''}
         onChange={(event) => onFilterChange('status', event.target.value || undefined)}
       >
-        <MenuItem value="">All statuses</MenuItem>
         {RELATIONSHIP_STATUSES.map((status) => (
           <MenuItem key={status} value={status}>
             {humanizeEnum(status)}
@@ -97,7 +159,6 @@ export const SupplierFilters = ({
         value={query.riskLevel ?? ''}
         onChange={(event) => onFilterChange('riskLevel', event.target.value || undefined)}
       >
-        <MenuItem value="">All risk levels</MenuItem>
         {RISK_LEVELS.map((level) => (
           <MenuItem key={level} value={level}>
             {humanizeEnum(level)}
@@ -111,7 +172,6 @@ export const SupplierFilters = ({
         value={query.assessmentStatus ?? ''}
         onChange={(event) => onFilterChange('assessmentStatus', event.target.value || undefined)}
       >
-        <MenuItem value="">All assessments</MenuItem>
         {ASSESSMENT_STATUSES.map((status) => (
           <MenuItem key={status} value={status}>
             {humanizeEnum(status)}
@@ -119,14 +179,7 @@ export const SupplierFilters = ({
         ))}
       </TextField>
 
-      <Button
-        onClick={onClear}
-        disabled={!hasFilters}
-        startIcon={<ClearIcon />}
-        sx={{ alignSelf: 'center' }}
-      >
-        Clear
-      </Button>
+      <Button label="Clear filters" onClick={onClear} size="sm" disabled={!hasFilters} />
     </Box>
   );
 };

@@ -32,21 +32,18 @@ export interface SupplierListParams {
   hasFilters: boolean;
 }
 
-/**
- * Keeps the list's filters and pagination in the URL rather than in component state, so a
- * filtered view can be linked, bookmarked and restored by the browser's back button — and
- * so RTK Query caches one entry per distinct URL.
- */
 export const useSupplierListParams = (): SupplierListParams => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const query = useMemo<ListSuppliersQuery>(() => {
     const search = searchParams.get('search')?.trim();
     const country = searchParams.get('country')?.trim().toUpperCase();
+    const industry = searchParams.get('industry')?.trim();
 
     return {
       search: search || undefined,
       country: country && country.length === 2 ? country : undefined,
+      industry: industry || undefined,
       status: parseEnum<RelationshipStatus>(searchParams.get('status'), RELATIONSHIP_STATUSES),
       riskLevel: parseEnum<RiskLevel>(searchParams.get('riskLevel'), RISK_LEVELS),
       assessmentStatus: parseEnum<AssessmentStatus>(
@@ -115,7 +112,12 @@ export const useSupplierListParams = (): SupplierListParams => {
   }, [setSearchParams]);
 
   const hasFilters = Boolean(
-    query.search || query.country || query.status || query.riskLevel || query.assessmentStatus,
+    query.search ||
+    query.country ||
+    query.industry ||
+    query.status ||
+    query.riskLevel ||
+    query.assessmentStatus,
   );
 
   return { query, setFilter, setPage, setLimit, clearFilters, hasFilters };

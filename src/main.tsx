@@ -6,17 +6,16 @@ import { BrowserRouter } from 'react-router-dom';
 import { App } from './App';
 import { store } from './app/store';
 
-const container = document.querySelector('#root');
-if (!container) {
-  throw new Error('Root element #root was not found in index.html');
-}
+const element = document.getElementById('root')!;
 
-createRoot(container).render(
+const Main = () => (
   <StrictMode>
     <Provider store={store}>
       <BrowserRouter>
         <App />
       </BrowserRouter>
     </Provider>
-  </StrictMode>,
+  </StrictMode>
 );
+
+createRoot(element).render(<Main />);

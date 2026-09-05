@@ -1,4 +1,9 @@
-import type { PaginatedSuppliers, SupplierDetail, SupplierListItem } from '../api/types';
+import type {
+  IndustryList,
+  PaginatedSuppliers,
+  SupplierDetail,
+  SupplierListItem,
+} from '../api/types';
 
 // Typing the fixtures with the generated contracts means a backend schema change breaks
 // the tests at compile time rather than silently drifting from reality.
@@ -21,6 +26,19 @@ export const secondSupplierListItem: SupplierListItem = {
 export const suppliersPage: PaginatedSuppliers = {
   data: [supplierListItem, secondSupplierListItem],
   pagination: { page: 1, limit: 10, total: 2, hasNext: false },
+};
+
+export const industryList: IndustryList = {
+  data: [
+    { id: 'food-beverage', name: 'Food & Beverage', supplierCount: 1 },
+    { id: 'manufacturing', name: 'Manufacturing', supplierCount: 1 },
+  ],
+  total: 2,
+};
+
+export const supplierIndustries: Record<string, string> = {
+  sup_001: 'manufacturing',
+  sup_002: 'food-beverage',
 };
 
 export const supplierDetail: SupplierDetail = {

@@ -1,6 +1,6 @@
+import { Chip } from '@ioanatu/component-library';
 import type { AssessmentStatus, RelationshipStatus, RiskLevel } from '../api/types';
 import { humanizeEnum } from '../utils/format';
-import { Chip } from '@ioanatu/component-library';
 
 type ChipVariant = 'primary' | 'success' | 'secondary' | 'danger' | 'accent';
 

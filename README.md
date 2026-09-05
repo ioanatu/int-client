@@ -85,9 +85,23 @@ RTK Query (`src/api/suppliersApi.ts`) owns all server state:
   failures get their own plain-language message, and every error state offers a retry —
   except a 404, which retrying cannot fix.
 
+- **Lazy loading** — the industry filter's options come from `GET /api/v1/industries`, and
+  that request is only made when the dropdown is opened: most visits to the list never
+  touch the filter, so paying for the round trip up front would be waste. Once fetched it
+  is kept for the whole session (`keepUnusedDataFor: 3600`) — a small closed set that only
+  changes when the supplier data does — so reopening the dropdown never re-requests. The
+  one case that fetches up front is a deep link that already carries `?industry=`, where
+  the list is what turns the id in the URL into a readable name.
+
 List filters and pagination live in the **URL**, not in component state, so a filtered view
 can be linked and restored by the back button, and each distinct URL maps to its own cache
-entry. Values from the URL are validated against the generated unions before they are sent.
+entry. Values from the URL are validated against the generated unions before they are sent —
+except `industry`, which is data rather than a closed enum, so an unknown value is simply
+passed through (the API answers with an empty page, not a 400).
+
+The industry dropdown sends the **id** the API advertises (`food-beverage`), not the display
+name (`Food & Beverage`): the ids are URL-safe by construction, so no filter value ever needs
+percent-encoding. The supplier count the endpoint returns is shown next to each option.
 
 Redux Toolkit also backs a small `uiSlice` (colour mode, persisted to `localStorage`).
 
@@ -124,3 +138,9 @@ differ from the API.
 ```bash
 yarn test:run
 ```
+
+`src/features/suppliers/SupplierFilters.test.tsx` covers the industry filter specifically,
+including the part that is easy to regress: that no industries request is made before the
+dropdown is opened, that reopening it is served from cache, that the id (not the display
+name) reaches the API, and that a failed load is reported inside the dropdown and retried
+when it is reopened.

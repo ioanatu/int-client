@@ -1,5 +1,3 @@
-/** Formatting helpers shared by the list and detail views. */
-
 const LOCALE = 'en-GB';
 
 export const formatDate = (value: string | null | undefined): string => {
@@ -28,8 +26,7 @@ export const formatDateTime = (value: string | null | undefined): string => {
       });
 };
 
-export const formatNumber = (value: number | null | undefined): string =>
-  value === null || value === undefined ? '—' : value.toLocaleString(LOCALE);
+export const formatNumber = (value: number | null | undefined): string => (value ?? '—').toString();
 
 export const formatCurrency = (amount: number, currency: string): string =>
   new Intl.NumberFormat(LOCALE, {
