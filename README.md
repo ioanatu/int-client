@@ -1,15 +1,14 @@
 # IntNext Client
 
-React client for the [IntNext PoC API](../int-server).
+React client for the [IntNext PoC API](https://github.com/ioanatu/int-server).
 
-**Stack:** React 19 · TypeScript · Redux Toolkit (RTK Query) · Material UI · Vite · Vitest
+**Stack:** React 19 · TypeScript · Redux Toolkit (RTK Query) · Material UI · component-library · Vite · Vitest
 
 ---
 
 ## Prerequisites
 
-Every `/api/**` request must carry an `X-SESSION` header. The Vite dev server proxies
-`/api` to the backend and injects that header from `SESSION_TOKEN` (see `vite.config.ts`).
+`SESSION_TOKEN` for the `X-SESSION` header.
 
 ## Quick start
 
@@ -21,11 +20,11 @@ cp .env.example .env          # set SESSION_TOKEN to the backend's own token
 # 2. Install and run
 corepack enable               # once per machine — the repo pins Yarn 4 via `packageManager`
 yarn install
-yarn dev                      # http://localhost:5173
+yarn dev                      # http://localhost:5173, against VITE_API_URL
 
-#(optional) Run the client against the local backend server
-# Start the backend (in another terminal)
-cd ../int-server && npm run start:dev
+# (optional) Run the client against the local backend server
+cd ../int-server && npm run start:dev   # in another terminal, on :3000
+yarn dev:local                          # back in int-client
 ```
 
 ## Scripts
@@ -33,6 +32,7 @@ cd ../int-server && npm run start:dev
 | Command               | What it does                                                |
 | --------------------- | ----------------------------------------------------------- |
 | `yarn dev`            | Dev server on `:5173` with the `/api` proxy                 |
+| `yarn dev:local`      | Same, but forced through the proxy to the local backend     |
 | `yarn build`          | `tsc --noEmit` then a production build into `dist/`         |
 | `yarn preview`        | Serve the production buil locally                           |
 | `yarn test`           | Vitest in watch mode                                        |
@@ -138,9 +138,3 @@ differ from the API.
 ```bash
 yarn test:run
 ```
-
-`src/features/suppliers/SupplierFilters.test.tsx` covers the industry filter specifically,
-including the part that is easy to regress: that no industries request is made before the
-dropdown is opened, that reopening it is served from cache, that the id (not the display
-name) reaches the API, and that a failed load is reported inside the dropdown and retried
-when it is reopened.
