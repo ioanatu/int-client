@@ -2,7 +2,7 @@
 
 React client for the [IntNext PoC API](https://github.com/ioanatu/int-server).
 
-**Stack:** React 19 · TypeScript · Redux Toolkit (RTK Query) · Material UI · component-library · Vite · Vitest
+**Stack:** React 19 · TypeScript · Redux Toolkit (RTK Query) · Material UI · [component-library](https://github.com/ioanatu/component-library/pkgs/npm/component-library) · Vite · Vitest
 
 ---
 
