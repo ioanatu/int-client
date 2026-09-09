@@ -53,7 +53,7 @@ const updateCSPAndAddIntegrity = (htmlFilePath) => {
   const connectSrcEndpoints = [
     process.env.VITE_API_URL,
     'https://int-server-ytx6.onrender.com/api/v1',
-    'https://int-server-ytx6.onrender.com/api/v1/suppliers?page=1&limit=10',
+    'https://int-server-ytx6.onrender.com/api/v1/suppliers',
   ]
     .filter(Boolean)
     .join(' ');
