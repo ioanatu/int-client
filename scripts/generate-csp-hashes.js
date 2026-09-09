@@ -3,6 +3,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 
+import.meta.env.VITE_API_URL;
+
 const distFolder = path.join(process.cwd(), 'dist');
 const indexPath = path.join(distFolder, 'index.html');
 
@@ -52,7 +54,7 @@ const updateCSPAndAddIntegrity = (htmlFilePath) => {
 
   const connectSrcEndpoints = [process.env.VITE_API_URL].filter(Boolean).join(' ');
 
-  console.log('_________ ', process.env.VITE_API_URL);
+  console.log('_________ ', import.meta.env.VITE_API_URL);
 
   const meta = `<meta http-equiv="Content-Security-Policy" content="script-src 'strict-dynamic' ${hashes.join(' ')};  connect-src ${connectSrcEndpoints}; object-src 'none'; base-uri 'none';" />`;
 
