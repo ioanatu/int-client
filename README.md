@@ -31,8 +31,7 @@ yarn dev:local                          # back in int-client
 
 | Command               | What it does                                                |
 | --------------------- | ----------------------------------------------------------- |
-| `yarn dev`            | Dev server on `:5173` with the `/api` proxy                 |
-| `yarn dev:local`      | Same, but forced through the proxy to the local backend     |
+| `yarn dev`            | Dev server on `:5173` with `/api` proxy to deployed backend |
 | `yarn build`          | `tsc --noEmit` then a production build into `dist/`         |
 | `yarn preview`        | Serve the production buil locally                           |
 | `yarn test`           | Vitest in watch mode                                        |

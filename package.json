@@ -4,8 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "dev:local": "VITE_API_URL=/api/v1 VITE_SESSION_TOKEN= vite",
+    "dev": "VITE_API_URL=/api/v1 vite",
     "dev:direct": "VITE_API_URL=http://localhost:3000/api/v1 VITE_SESSION_TOKEN=$(grep \"^SESSION_TOKEN=\" ../int-server/.env | cut -d= -f2-) vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
