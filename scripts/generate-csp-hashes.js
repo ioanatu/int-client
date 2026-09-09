@@ -54,7 +54,7 @@ const updateCSPAndAddIntegrity = (htmlFilePath) => {
 
   const connectSrcEndpoints = [process.env.VITE_API_URL].filter(Boolean).join(' ');
 
-  console.log('_________ ', import.meta.env.VITE_API_URL);
+  console.log('_________ ', process.env.VITE_API_URL);
 
   const meta = `<meta http-equiv="Content-Security-Policy" content="script-src 'strict-dynamic' ${hashes.join(' ')};  connect-src ${connectSrcEndpoints}; object-src 'none'; base-uri 'none';" />`;
 
