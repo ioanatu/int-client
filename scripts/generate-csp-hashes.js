@@ -50,9 +50,13 @@ const updateCSPAndAddIntegrity = (htmlFilePath) => {
   }
   console.log(`${hashes.length} integrity attributes added to script tags.`);
 
-  const connectSrcEndpoints = [process.env.VITE_API_URL].filter(Boolean).join(' ');
-
-  console.log('_________ ', process.env.VITE_API_URL);
+  const connectSrcEndpoints = [
+    process.env.VITE_API_URL,
+    'https://int-server-ytx6.onrender.com/api/v1',
+    'https://int-server-ytx6.onrender.com/api/v1/suppliers?page=1&limit=10',
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   const meta = `<meta http-equiv="Content-Security-Policy" content="script-src 'strict-dynamic' ${hashes.join(' ')};  connect-src ${connectSrcEndpoints}; object-src 'none'; base-uri 'none';" />`;
 
