@@ -50,7 +50,9 @@ const updateCSPAndAddIntegrity = (htmlFilePath) => {
   }
   console.log(`${hashes.length} integrity attributes added to script tags.`);
 
-  const connectSrcEndpoints = [process.env.VITE_API_URL].filter(Boolean).join(' ');
+  const api_url = process.env.VITE_API_URL + '/';
+
+  const connectSrcEndpoints = [api_url].filter(Boolean).join(' ');
 
   const meta = `<meta http-equiv="Content-Security-Policy" content="script-src 'strict-dynamic' ${hashes.join(' ')};  connect-src ${connectSrcEndpoints}; object-src 'none'; base-uri 'none';" />`;
 
