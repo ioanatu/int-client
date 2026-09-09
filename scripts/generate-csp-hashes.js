@@ -3,8 +3,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 
-import.meta.env.VITE_API_URL;
-
 const distFolder = path.join(process.cwd(), 'dist');
 const indexPath = path.join(distFolder, 'index.html');
 
