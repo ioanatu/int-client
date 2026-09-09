@@ -44,7 +44,7 @@ jobs:
       - name: Append Content-Security-Policy in index.html
         run: node ./scripts/generate-csp-hashes.js
         env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
