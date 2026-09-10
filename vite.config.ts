@@ -18,6 +18,7 @@ export default defineConfig(({ mode }) => {
     define: {
       'process.env.VITE_API_URL': JSON.stringify(env.VITE_API_URL),
       'process.env.VITE_SESSION_TOKEN': JSON.stringify(env.VITE_SESSION_TOKEN),
+      'process.env.VITE_SENTRY_DSN': JSON.stringify(env.VITE_SENTRY_DSN),
     },
     server: {
       port: 5173,

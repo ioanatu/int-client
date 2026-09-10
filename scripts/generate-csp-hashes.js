@@ -52,7 +52,21 @@ const updateCSPAndAddIntegrity = (htmlFilePath) => {
 
   const api_url = process.env.VITE_API_URL + '/';
 
-  const connectSrcEndpoints = [api_url].filter(Boolean).join(' ');
+  const sentry_ingest = (() => {
+    const dsn = process.env.VITE_SENTRY_DSN;
+    console.log('___ ', dsn);
+
+    if (!dsn) return null;
+    try {
+      console.log('___ ', dsn.origin);
+      console.log('___ new ', new URL(dsn).origin);
+      return new URL(dsn).origin;
+    } catch {
+      throw new Error(`VITE_SENTRY_DSN is set but is not a valid URL: ${dsn}`);
+    }
+  })();
+
+  const connectSrcEndpoints = [api_url, sentry_ingest].filter(Boolean).join(' ');
 
   const meta = `<meta http-equiv="Content-Security-Policy" content="script-src 'strict-dynamic' ${hashes.join(' ')};  connect-src ${connectSrcEndpoints}; object-src 'none'; base-uri 'none';" />`;
 

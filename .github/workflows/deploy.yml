@@ -14,6 +14,7 @@ jobs:
     env:
       VITE_API_URL: ${{ vars.VITE_API_URL }}
       VITE_SESSION_TOKEN: ${{ vars.VITE_SESSION_TOKEN }}
+      VITE_SENTRY_DSN: ${{ vars.VITE_SENTRY_DSN }}
 
     steps:
       - name: Checkout

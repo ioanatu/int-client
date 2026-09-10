@@ -1,12 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
+import { createReduxEnhancer } from '@sentry/react';
 import { suppliersApi } from '../api/suppliersApi';
 import { uiSlice } from '../features/ui/uiSlice';
 
-/**
- * Builds a fresh store. Tests call this per test case so cached API data never leaks
- * between them; the app creates exactly one at startup (see `store` below).
- */
 export const makeStore = () => {
   const store = configureStore({
     reducer: {
@@ -14,9 +11,9 @@ export const makeStore = () => {
       [uiSlice.reducerPath]: uiSlice.reducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(suppliersApi.middleware),
+    enhancers: (getDefaultEnhancers) => getDefaultEnhancers().concat(createReduxEnhancer()),
   });
 
-  // Enables the `refetchOnReconnect` behaviour configured on the API slice.
   setupListeners(store.dispatch);
 
   return store;
