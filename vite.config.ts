@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     build: {
-      sourcemap: true,
+      sourcemap: 'hidden',
       rolldownOptions: {
         output: {
           manualChunks(id: string) {

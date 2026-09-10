@@ -51,6 +51,8 @@ jobs:
         with:
           environment: production
           sourcemaps: './dist'
+          ignore_missing: true
+          set_commits: skip
 
       - name: Append Content-Security-Policy in index.html
         run: node ./scripts/generate-csp-hashes.js
