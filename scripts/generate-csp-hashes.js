@@ -54,12 +54,9 @@ const updateCSPAndAddIntegrity = (htmlFilePath) => {
 
   const sentry_ingest = (() => {
     const dsn = process.env.VITE_SENTRY_DSN;
-    console.log('___ ', dsn);
 
     if (!dsn) return null;
     try {
-      console.log('___ ', dsn.origin);
-      console.log('___ new ', new URL(dsn).origin);
       return new URL(dsn).origin;
     } catch {
       throw new Error(`VITE_SENTRY_DSN is set but is not a valid URL: ${dsn}`);
