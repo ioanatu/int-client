@@ -16,8 +16,6 @@ import { AssessmentStatusChip, RelationshipStatusLabel, RiskLabel } from '../../
 import { ErrorState, LoadingState } from '../../components/QueryStates';
 import { formatCurrency, formatDate, formatDateTime, formatNumber } from '../../utils/format';
 
-const env = import.meta.env.MODE;
-
 const Field = ({ label, children }: { label: string; children: ReactNode }) => (
   <Box>
     <Typography variant="caption" color="text.secondary" component="dt">
@@ -99,16 +97,6 @@ export const SupplierDetailPage = () => {
   return (
     <Box>
       {backButton}
-
-      <div>
-        <button
-          onClick={() => {
-            throw new Error(`Sentry TEST ${env} sourcemaps`);
-          }}
-        >
-          {env}
-        </button>
-      </div>
 
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
