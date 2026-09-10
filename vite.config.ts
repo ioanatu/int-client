@@ -20,6 +20,9 @@ export default defineConfig(({ mode }) => {
       'process.env.VITE_API_URL': JSON.stringify(env.VITE_API_URL),
       'process.env.VITE_SESSION_TOKEN': JSON.stringify(env.VITE_SESSION_TOKEN),
       'process.env.VITE_SENTRY_DSN': JSON.stringify(env.VITE_SENTRY_DSN),
+      'process.env.SENTRY_AUTH_TOKEN': JSON.stringify(env.SENTRY_AUTH_TOKEN),
+      'process.env.SENTRY_ORG': JSON.stringify(env.SENTRY_ORG),
+      'process.env.SENTRY_PROJECT': JSON.stringify(env.SENTRY_PROJECT),
     },
     server: {
       port: 5173,
