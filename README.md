@@ -68,44 +68,6 @@ fails the build instead of silently producing a request the API rejects.
 
 ---
 
-## Data fetching and caching
-
-RTK Query (`src/api/suppliersApi.ts`) owns all server state:
-
-- **Caching** — one cache entry per distinct query. Paging back to a page you have already
-  visited, or returning to a supplier you have already opened, renders from cache with no
-  request. Unused entries are evicted after five minutes (`keepUnusedDataFor`), which suits
-  read-only master data.
-- **Loading** — `isLoading` (first load, nothing to show) drives the full-page spinner,
-  while `isFetching` (background refresh over existing data) drives a thin progress bar so
-  the table never flashes empty.
-- **Errors** — `src/api/errors.ts` unwraps the backend's error envelope, so the user sees
-  _“Supplier with id 'sup_999' was not found.”_ rather than a status code. Transport
-  failures get their own plain-language message, and every error state offers a retry —
-  except a 404, which retrying cannot fix.
-
-- **Lazy loading** — the industry filter's options come from `GET /api/v1/industries`, and
-  that request is only made when the dropdown is opened: most visits to the list never
-  touch the filter, so paying for the round trip up front would be waste. Once fetched it
-  is kept for the whole session (`keepUnusedDataFor: 3600`) — a small closed set that only
-  changes when the supplier data does — so reopening the dropdown never re-requests. The
-  one case that fetches up front is a deep link that already carries `?industry=`, where
-  the list is what turns the id in the URL into a readable name.
-
-List filters and pagination live in the **URL**, not in component state, so a filtered view
-can be linked and restored by the back button, and each distinct URL maps to its own cache
-entry. Values from the URL are validated against the generated unions before they are sent —
-except `industry`, which is data rather than a closed enum, so an unknown value is simply
-passed through (the API answers with an empty page, not a 400).
-
-The industry dropdown sends the **id** the API advertises (`food-beverage`), not the display
-name (`Food & Beverage`): the ids are URL-safe by construction, so no filter value ever needs
-percent-encoding. The supplier count the endpoint returns is shown next to each option.
-
-Redux Toolkit also backs a small `uiSlice` (colour mode, persisted to `localStorage`).
-
----
-
 ## Project structure
 
 ```
@@ -127,6 +89,12 @@ src/
 
 ---
 
+## Observability
+
+This project uses Sentry for monitoring and error tracking. Production sourcemaps are uploaded in the CI/CD pipeline with GitHub actions.
+
+---
+
 ## Testing
 
 Vitest + React Testing Library, with [MSW](https://mswjs.io) intercepting HTTP so the real
@@ -137,3 +105,5 @@ differ from the API.
 ```bash
 yarn test:run
 ```
+
+For a detailed list of implemented features, check out the documentation in [Features](./FEATURES.md).

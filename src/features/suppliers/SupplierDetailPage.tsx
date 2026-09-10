@@ -103,7 +103,7 @@ export const SupplierDetailPage = () => {
       <div>
         <button
           onClick={() => {
-            throw new Error('Sentry TEST prod');
+            throw new Error(`Sentry TEST ${env} sourcemaps`);
           }}
         >
           {env}
