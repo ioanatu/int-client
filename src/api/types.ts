@@ -13,6 +13,8 @@ export type PaginationMeta = components['schemas']['PaginationMetaDto'];
 export type ApiErrorResponse = components['schemas']['ErrorResponseDto'];
 export type Industry = components['schemas']['IndustryDto'];
 export type IndustryList = components['schemas']['IndustryListDto'];
+export type CountryOption = components['schemas']['CountryOptionDto'];
+export type CountryOptionList = components['schemas']['CountryOptionListDto'];
 
 /** Query string accepted by `GET /api/v1/suppliers`. */
 export type ListSuppliersQuery = NonNullable<

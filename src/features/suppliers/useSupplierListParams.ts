@@ -23,7 +23,6 @@ const parsePositiveInt = (value: string | null, fallback: number): number => {
 };
 
 export interface SupplierListParams {
-  /** Ready to hand straight to `useListSuppliersQuery`. */
   query: ListSuppliersQuery;
   setFilter: (key: keyof ListSuppliersQuery, value: string | undefined) => void;
   setPage: (page: number) => void;
@@ -37,12 +36,12 @@ export const useSupplierListParams = (): SupplierListParams => {
 
   const query = useMemo<ListSuppliersQuery>(() => {
     const search = searchParams.get('search')?.trim();
-    const country = searchParams.get('country')?.trim().toUpperCase();
+    const countries = searchParams.getAll('country').map((c) => c.trim().toUpperCase());
     const industry = searchParams.get('industry')?.trim();
 
     return {
       search: search || undefined,
-      country: country && country.length === 2 ? country : undefined,
+      country: countries.length ? countries : undefined,
       industry: industry || undefined,
       status: parseEnum<RelationshipStatus>(searchParams.get('status'), RELATIONSHIP_STATUSES),
       riskLevel: parseEnum<RiskLevel>(searchParams.get('riskLevel'), RISK_LEVELS),

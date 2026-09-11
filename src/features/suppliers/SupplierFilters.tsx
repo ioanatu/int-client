@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useEffect, useState } from 'react';
 import { getErrorMessage } from '../../api/errors';
-import { useListIndustriesQuery } from '../../api/suppliersApi';
+import { useListCountriesQuery, useListIndustriesQuery } from '../../api/suppliersApi';
 import {
   ASSESSMENT_STATUSES,
   type ListSuppliersQuery,
@@ -17,6 +17,9 @@ import {
   type Search,
 } from '../../api/types';
 import { formatNumber, humanizeEnum } from '../../utils/format';
+import Select from '@mui/material/Select';
+import Chip from '@mui/material/Chip';
+import OutlinedInput from '@mui/material/OutlinedInput';
 
 const SEARCH_DEBOUNCE_MS = 300;
 
@@ -38,6 +41,7 @@ export const SupplierFilters = ({
   const [search, setSearch] = useState<Search>(query.search ?? '');
   const [lastAppliedSearch, setLastAppliedSearch] = useState<Search>(query.search);
   const [isIndustryMenuOpened, setIsIndustryMenuOpened] = useState<boolean>(false);
+  const [countriesMenuOpened, setCountriesMenuOpened] = useState<boolean>(false);
 
   if (query.search !== lastAppliedSearch) {
     setLastAppliedSearch(query.search);
@@ -63,9 +67,23 @@ export const SupplierFilters = ({
     skip: !isIndustryMenuOpened && !query.industry,
   });
 
+  const {
+    data: countriesList,
+    isFetching: isLoadingCountries,
+    error: countriesError,
+    refetch: refetchCountries,
+  } = useListCountriesQuery(undefined, {
+    skip: !countriesMenuOpened && !query.country,
+  });
+
   const handleIndustryMenuOpen = () => {
     setIsIndustryMenuOpened(true);
     if (industriesError) refetchIndustries();
+  };
+
+  const handleCountryMenuOpen = () => {
+    setIsIndustryMenuOpened(true);
+    if (industriesError) refetchCountries();
   };
 
   const industries = industryList?.data ?? [];
@@ -75,6 +93,28 @@ export const SupplierFilters = ({
 
   const renderIndustryValue = (value: unknown): string =>
     industries.find(({ id }) => id === value)?.name ?? String(value);
+
+  // const renderCountryValue = (value: unknown): string =>
+  //   industries.find(({ id }) => id === value)?.name ?? String(value);
+
+  const countries = countriesList?.data ?? [];
+  const selectedCountries = query.country ?? '';
+
+  console.log('___ countries ', countries);
+  console.log('___ selectedCountries ', selectedCountries);
+
+  const ITEM_HEIGHT = 48;
+  const ITEM_PADDING_TOP = 8;
+  const MenuProps = {
+    slotProps: {
+      paper: {
+        style: {
+          maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+          width: 250,
+        },
+      },
+    },
+  };
 
   return (
     <Box
@@ -99,6 +139,64 @@ export const SupplierFilters = ({
           },
         }}
       />
+
+      {/* <TextField
+        {...selectProps}
+        label="Countries"
+        value={!isIndustryQueryWrong ? selectedCountries : ''}
+        onChange={(event) => onFilterChange('country', event.target.value || undefined)}
+        slotProps={{
+          select: { onOpen: handleCountryMenuOpen, renderValue: renderCountryValue },
+        }}
+      > */}
+      <Select
+        labelId="demo-multiple-chip-label"
+        id="demo-multiple-chip"
+        multiple
+        value={selectedCountries}
+        onOpen={handleCountryMenuOpen}
+        onChange={(event) => onFilterChange('country', event.target.value[0] || undefined)}
+        input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+        renderValue={(selected) => (
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+            {selected.map((value) => (
+              <Chip key={value} label={value} size="small" />
+            ))}
+          </Box>
+        )}
+        MenuProps={MenuProps}
+      >
+        {isLoadingCountries && (
+          <MenuItem disabled>
+            <CircularProgress size={16} sx={{ mr: 1 }} aria-hidden />
+            Loading countries…
+          </MenuItem>
+        )}
+
+        {countriesError && (
+          <MenuItem disabled sx={{ display: 'block', whiteSpace: 'normal', maxWidth: 280 }}>
+            <Typography variant="body2">{getErrorMessage(industriesError)}</Typography>
+            <Typography variant="caption" color="text.secondary">
+              Close and reopen to try again.
+            </Typography>
+          </MenuItem>
+        )}
+
+        {countries.map((country) => (
+          <MenuItem key={country.id} value={country.id}>
+            {country.name}
+            <Typography
+              component="span"
+              variant="caption"
+              color="text.secondary"
+              sx={{ ml: 'auto', pl: 2 }}
+            >
+              {formatNumber(country.supplierCount)}
+            </Typography>
+          </MenuItem>
+        ))}
+      </Select>
+      {/* </TextField> */}
 
       <TextField
         {...selectProps}

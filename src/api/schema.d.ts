@@ -64,6 +64,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/countries': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List countries
+     * @description Returns every country present in the supplier data, with the number of suppliers in each. Intended to populate a country filter: pass one or more entry `id`s as the `country` query parameter on `GET /api/v1/suppliers` (repeat the parameter or use a comma-separated list to select several). The list is unpaginated — it is a small, closed set.
+     */
+    get: operations['CountriesController_findAll_v1'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/health': {
     parameters: {
       query?: never;
@@ -324,6 +344,32 @@ export interface components {
        */
       total: number;
     };
+    CountryOptionDto: {
+      /**
+       * @description ISO 3166-1 alpha-2 code. Stable and URL-safe — pass this verbatim in the `country` filter on `GET /api/v1/suppliers`.
+       * @example DE
+       */
+      id: string;
+      /**
+       * @description Display name, as stored on the supplier.
+       * @example Germany
+       */
+      name: string;
+      /**
+       * @description How many suppliers are currently based in this country.
+       * @example 3
+       */
+      supplierCount: number;
+    };
+    CountryOptionListDto: {
+      /** @description Countries, sorted by name. */
+      data: components['schemas']['CountryOptionDto'][];
+      /**
+       * @description Number of distinct countries.
+       * @example 14
+       */
+      total: number;
+    };
   };
   responses: never;
   parameters: never;
@@ -338,8 +384,8 @@ export interface operations {
       query?: {
         /** @description Case-insensitive free-text search across supplier id, name, industry and country name. */
         search?: string;
-        /** @description ISO 3166-1 alpha-2 country code. Case-insensitive. */
-        country?: string;
+        /** @description One or more ISO 3166-1 alpha-2 country codes, as served by `GET /api/v1/countries`. Repeat the parameter (`?country=DE&country=FR`) or pass a comma-separated list (`?country=DE,FR`); a supplier matches when its country is any of them. Case-insensitive. */
+        country?: string[];
         /** @description Business relationship status. */
         status?: 'active' | 'inactive' | 'onboarding' | 'offboarded';
         /** @description Risk band derived from the risk score. */
@@ -445,6 +491,44 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['IndustryListDto'];
+        };
+      };
+      /** @description The endpoint takes no query parameters. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description The `X-SESSION` header is missing or does not match the configured token. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  CountriesController_findAll_v1: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description All known countries, sorted by name. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CountryOptionListDto'];
         };
       };
       /** @description The endpoint takes no query parameters. */

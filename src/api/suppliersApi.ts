@@ -1,14 +1,19 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { API_URL, SESSION_HEADER, SESSION_TOKEN } from './config';
-import type { IndustryList, ListSuppliersQuery, PaginatedSuppliers, SupplierDetail } from './types';
+import type {
+  CountryOptionList,
+  IndustryList,
+  ListSuppliersQuery,
+  PaginatedSuppliers,
+  SupplierDetail,
+} from './types';
 
-export const pruneQuery = (query: ListSuppliersQuery): Record<string, string | number> => {
-  return Object.fromEntries(
+export const pruneQuery = (query: ListSuppliersQuery): Record<string, string | number | string[]> =>
+  Object.fromEntries(
     Object.entries(query).filter(
       ([, value]) => value !== undefined && value !== null && value !== '',
     ),
   );
-};
 
 export const suppliersApi = createApi({
   reducerPath: 'suppliersApi',
@@ -19,7 +24,8 @@ export const suppliersApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ['Supplier', 'Industry'], // used for caching and invalidation
+  // used for caching and invalidation on potential mutations
+  tagTypes: ['Supplier', 'Industry', 'Countries'],
   keepUnusedDataFor: 300,
   refetchOnReconnect: true,
   endpoints: (builder) => ({
@@ -43,6 +49,12 @@ export const suppliersApi = createApi({
       providesTags: [{ type: 'Industry', id: 'LIST' }],
     }),
 
+    listCountries: builder.query<CountryOptionList, void>({
+      query: () => 'countries',
+      keepUnusedDataFor: 3600,
+      providesTags: [{ type: 'Countries', id: 'LIST' }],
+    }),
+
     getSupplier: builder.query<SupplierDetail, string>({
       query: (supplierId) => `suppliers/${supplierId}`,
       providesTags: (_result, _error, supplierId) => [{ type: 'Supplier', id: supplierId }],
@@ -50,4 +62,9 @@ export const suppliersApi = createApi({
   }),
 });
 
-export const { useListSuppliersQuery, useListIndustriesQuery, useGetSupplierQuery } = suppliersApi;
+export const {
+  useListSuppliersQuery,
+  useListIndustriesQuery,
+  useListCountriesQuery,
+  useGetSupplierQuery,
+} = suppliersApi;
