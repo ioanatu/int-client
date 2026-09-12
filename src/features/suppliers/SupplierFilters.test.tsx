@@ -61,6 +61,21 @@ const captureCountryParams = () => {
 
 const lastRequest = (requests: string[][]) => requests[requests.length - 1];
 
+/** Records the whole query string of every supplier request, oldest first. */
+const captureQueries = () => {
+  const requests: URLSearchParams[] = [];
+  server.use(
+    http.get(`${API_BASE}/suppliers`, ({ request }) => {
+      requests.push(new URL(request.url).searchParams);
+      return HttpResponse.json({
+        data: [],
+        pagination: { page: 1, limit: 10, total: 0, hasNext: false },
+      });
+    }),
+  );
+  return requests;
+};
+
 describe('industry filter', () => {
   it('does not request the industries until the dropdown is opened', async () => {
     const calls = countIndustryRequests();
@@ -361,5 +376,68 @@ describe('country filter', () => {
 
     expect(await screen.findByRole('option', { name: /Germany/ })).toBeInTheDocument();
     expect(attempts).toBe(2);
+  });
+});
+
+/**
+ * Status, risk level and assessment all render through `EnumFilter`, so they are covered by
+ * one parameterised suite rather than three near-identical ones.
+ */
+describe.each([
+  { label: 'Status', param: 'status', option: 'Onboarding', value: 'onboarding' },
+  { label: 'Risk level', param: 'riskLevel', option: 'Medium', value: 'medium' },
+  { label: 'Assessment', param: 'assessmentStatus', option: 'In progress', value: 'in_progress' },
+])('$label filter', ({ label, param, option, value }) => {
+  const openMenu = async (user: ReturnType<typeof renderWithProviders>['user']) => {
+    await user.click(screen.getByRole('combobox', { name: label }));
+    return screen.findByRole('listbox');
+  };
+
+  it('labels its options for humans rather than showing the raw enum', async () => {
+    const { user } = renderWithProviders(<App />, { route: '/suppliers' });
+    await screen.findByText('Acme Components GmbH');
+
+    const listbox = await openMenu(user);
+
+    expect(await within(listbox).findByRole('option', { name: option })).toBeInTheDocument();
+    expect(within(listbox).queryByRole('option', { name: value })).not.toBeInTheDocument();
+  });
+
+  it('sends the selected value to the API and shows it as a chip', async () => {
+    const requests = captureQueries();
+    const { user } = renderWithProviders(<App />, { route: '/suppliers' });
+
+    const listbox = await openMenu(user);
+    await user.click(await within(listbox).findByRole('option', { name: option }));
+
+    await waitFor(() => {
+      expect(requests[requests.length - 1].get(param)).toBe(value);
+    });
+    expect(screen.getByRole('combobox', { name: label })).toHaveTextContent(option);
+  });
+
+  it('clears the filter when the chip is dismissed, without reopening the menu', async () => {
+    const requests = captureQueries();
+    const { user } = renderWithProviders(<App />, { route: `/suppliers?${param}=${value}` });
+
+    // Applied from the URL first, so the removal below is a real transition.
+    await waitFor(() => {
+      expect(requests[requests.length - 1].get(param)).toBe(value);
+    });
+
+    await user.click(await screen.findByLabelText(`Remove ${option}`));
+
+    await waitFor(() => {
+      expect(requests[requests.length - 1].get(param)).toBeNull();
+    });
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+  });
+
+  it('shows no chip while the filter is unset', async () => {
+    renderWithProviders(<App />, { route: '/suppliers' });
+    await screen.findByText('Acme Components GmbH');
+
+    expect(screen.getByRole('combobox', { name: label })).not.toHaveTextContent(option);
+    expect(screen.queryByLabelText(`Remove ${option}`)).not.toBeInTheDocument();
   });
 });

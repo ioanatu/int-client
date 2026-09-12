@@ -14,7 +14,7 @@ import Select, { type SelectChangeEvent } from '@mui/material/Select';
 import type { SvgIconProps } from '@mui/material/SvgIcon';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 import { getErrorMessage } from '../../api/errors';
 import { useListCountriesQuery, useListIndustriesQuery } from '../../api/suppliersApi';
 import {
@@ -37,9 +37,59 @@ const RemoveFilterIcon = ({ label, ...iconProps }: SvgIconProps & { label: strin
 
 const selectProps = { size: 'small', select: true, sx: { minWidth: 170 } } as const;
 
+type FilterChangeHandler = (key: keyof ListSuppliersQuery, value: FilterValueType) => void;
+
+const FilterChips = ({ children }: { children: ReactNode }) => (
+  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>{children}</Box>
+);
+
+const FilterChip = ({ label, onDelete }: { label: string; onDelete: () => void }) => (
+  <Chip
+    label={label}
+    size="small"
+    onDelete={onDelete}
+    deleteIcon={<RemoveFilterIcon label={`Remove ${label}`} />}
+  />
+);
+
+interface EnumFilterProps {
+  label: string;
+  filterKey: keyof ListSuppliersQuery;
+  value: string;
+  options: readonly string[];
+  onFilterChange: FilterChangeHandler;
+}
+
+const EnumFilter = ({ label, filterKey, value, options, onFilterChange }: EnumFilterProps) => (
+  <TextField
+    {...selectProps}
+    label={label}
+    value={value}
+    onChange={(event) => onFilterChange(filterKey, event.target.value || undefined)}
+    slotProps={{
+      select: {
+        renderValue: (selected) => (
+          <FilterChips>
+            <FilterChip
+              label={humanizeEnum(String(selected))}
+              onDelete={() => onFilterChange(filterKey, undefined)}
+            />
+          </FilterChips>
+        ),
+      },
+    }}
+  >
+    {options.map((option) => (
+      <MenuItem key={option} value={option}>
+        {humanizeEnum(option)}
+      </MenuItem>
+    ))}
+  </TextField>
+);
+
 interface SupplierFiltersProps {
   query: ListSuppliersQuery;
-  onFilterChange: (key: keyof ListSuppliersQuery, value: FilterValueType) => void;
+  onFilterChange: FilterChangeHandler;
   onClear: () => void;
   hasFilters: boolean;
 }
@@ -54,7 +104,6 @@ export const SupplierFilters = ({
   const [lastAppliedSearch, setLastAppliedSearch] = useState<Search>(query.search);
   const [isIndustryMenuOpened, setIsIndustryMenuOpened] = useState<boolean>(false);
   const [countriesMenuOpened, setCountriesMenuOpened] = useState<boolean>(false);
-  const [statusMenuOpened, setStatusMenuOpened] = useState<boolean>(false);
 
   if (query.search !== lastAppliedSearch) {
     setLastAppliedSearch(query.search);
@@ -85,15 +134,14 @@ export const SupplierFilters = ({
     refetch: refetchCountries,
   } = useListCountriesQuery(undefined, { skip: !countriesMenuOpened && !query.country });
 
-  const handleMenuOpen = (filter: string) => () => {
-    if (filter === 'Industry') {
-      setIsIndustryMenuOpened(true);
-      if (industriesError) refetchIndustries();
-    }
-    if (filter === 'Country') {
-      setCountriesMenuOpened(true);
-      if (countriesError) refetchCountries();
-    }
+  const handleIndustryMenuOpen = () => {
+    setIsIndustryMenuOpened(true);
+    if (industriesError) refetchIndustries();
+  };
+
+  const handleCountryMenuOpen = () => {
+    setCountriesMenuOpened(true);
+    if (countriesError) refetchCountries();
   };
 
   const industries = industryList?.data ?? [];
@@ -101,23 +149,13 @@ export const SupplierFilters = ({
   const isIndustryQueryWrong =
     selectedIndustry !== '' && !industries.some(({ id }) => id === selectedIndustry);
 
-  const renderFilterValue = (value: unknown, filter: 'industry' | 'status') => {
-    let name = '';
-    if (filter === 'industry') {
-      name = industries.find(({ id }) => id === value)?.name ?? String(value);
-    }
-    if (filter === 'status') {
-      name = RELATIONSHIP_STATUSES.find((status) => status === value) ?? String(value);
-    }
+  const renderIndustryValue = (value: unknown) => {
+    const name = industries.find(({ id }) => id === value)?.name ?? String(value);
+
     return (
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-        <Chip
-          label={name}
-          size="small"
-          onDelete={() => onFilterChange(filter, undefined)}
-          deleteIcon={<RemoveFilterIcon label={`Remove ${name}`} />}
-        />
-      </Box>
+      <FilterChips>
+        <FilterChip label={name} onDelete={() => onFilterChange('industry', undefined)} />
+      </FilterChips>
     );
   };
 
@@ -134,27 +172,16 @@ export const SupplierFilters = ({
     );
 
   const renderCountryValue = (selected: string[]) => (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+    <FilterChips>
       {selected.map((code) => (
-        <Chip
-          key={code}
-          label={countryName(code)}
-          size="small"
-          onDelete={handleDeleteCountry(code)}
-          deleteIcon={<RemoveFilterIcon label={`Remove ${countryName(code)}`} />}
-        />
+        <FilterChip key={code} label={countryName(code)} onDelete={handleDeleteCountry(code)} />
       ))}
-    </Box>
+    </FilterChips>
   );
 
   const handleCountryChange = (event: SelectChangeEvent<string[]>) => {
     const { value } = event.target;
     onFilterChange('country', typeof value === 'string' ? value.split(',') : value);
-  };
-
-  const handleCloseMenu = (filter: string) => () => {
-    if (filter === 'industry') setIsIndustryMenuOpened(false);
-    if (filter === 'status') setStatusMenuOpened(false);
   };
 
   return (
@@ -187,7 +214,7 @@ export const SupplierFilters = ({
           labelId="country-filter-label"
           multiple
           value={selectedCountries}
-          onOpen={handleMenuOpen('Country')}
+          onOpen={handleCountryMenuOpen}
           onClose={() => setCountriesMenuOpened(false)}
           onChange={handleCountryChange}
           input={<OutlinedInput label="Countries" />}
@@ -235,9 +262,9 @@ export const SupplierFilters = ({
         focused={isIndustryMenuOpened}
         slotProps={{
           select: {
-            onOpen: handleMenuOpen('Industry'),
-            renderValue: (value) => renderFilterValue(value, 'industry'),
-            onClose: handleCloseMenu('industry'),
+            onOpen: handleIndustryMenuOpen,
+            onClose: () => setIsIndustryMenuOpened(false),
+            renderValue: renderIndustryValue,
           },
         }}
       >
@@ -272,51 +299,29 @@ export const SupplierFilters = ({
         ))}
       </TextField>
 
-      <TextField
-        {...selectProps}
+      <EnumFilter
         label="Status"
+        filterKey="status"
         value={query.status ?? ''}
-        onChange={(event) => onFilterChange('status', event.target.value || undefined)}
-        focused={statusMenuOpened}
-        slotProps={{
-          select: {
-            renderValue: (value) => renderFilterValue(value, 'status'),
-            onClose: handleCloseMenu('status'),
-          },
-        }}
-      >
-        {RELATIONSHIP_STATUSES.map((status) => (
-          <MenuItem key={status} value={status}>
-            {humanizeEnum(status)}
-          </MenuItem>
-        ))}
-      </TextField>
+        options={RELATIONSHIP_STATUSES}
+        onFilterChange={onFilterChange}
+      />
 
-      <TextField
-        {...selectProps}
+      <EnumFilter
         label="Risk level"
+        filterKey="riskLevel"
         value={query.riskLevel ?? ''}
-        onChange={(event) => onFilterChange('riskLevel', event.target.value || undefined)}
-      >
-        {RISK_LEVELS.map((level) => (
-          <MenuItem key={level} value={level}>
-            {humanizeEnum(level)}
-          </MenuItem>
-        ))}
-      </TextField>
+        options={RISK_LEVELS}
+        onFilterChange={onFilterChange}
+      />
 
-      <TextField
-        {...selectProps}
+      <EnumFilter
         label="Assessment"
+        filterKey="assessmentStatus"
         value={query.assessmentStatus ?? ''}
-        onChange={(event) => onFilterChange('assessmentStatus', event.target.value || undefined)}
-      >
-        {ASSESSMENT_STATUSES.map((status) => (
-          <MenuItem key={status} value={status}>
-            {humanizeEnum(status)}
-          </MenuItem>
-        ))}
-      </TextField>
+        options={ASSESSMENT_STATUSES}
+        onFilterChange={onFilterChange}
+      />
 
       <Button label="Clear filters" onClick={onClear} size="sm" disabled={!hasFilters} />
     </Box>
