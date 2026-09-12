@@ -1,4 +1,5 @@
 import type {
+  CountryOptionList,
   IndustryList,
   PaginatedSuppliers,
   SupplierDetail,
@@ -6,7 +7,7 @@ import type {
 } from '../api/types';
 
 // Typing the fixtures with the generated contracts means a backend schema change breaks
-// the tests at compile time rather than silently drifting from reality.
+// the tests at compile time.
 export const supplierListItem: SupplierListItem = {
   id: 'sup_001',
   name: 'Acme Components GmbH',
@@ -32,6 +33,14 @@ export const industryList: IndustryList = {
   data: [
     { id: 'food-beverage', name: 'Food & Beverage', supplierCount: 1 },
     { id: 'manufacturing', name: 'Manufacturing', supplierCount: 1 },
+  ],
+  total: 2,
+};
+
+export const countryList: CountryOptionList = {
+  data: [
+    { id: 'DE', name: 'Germany', supplierCount: 1 },
+    { id: 'SE', name: 'Sweden', supplierCount: 1 },
   ],
   total: 2,
 };

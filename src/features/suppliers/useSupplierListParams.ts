@@ -22,9 +22,11 @@ const parsePositiveInt = (value: string | null, fallback: number): number => {
   return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
 };
 
+export type FilterValueType = string | string[] | undefined;
+
 export interface SupplierListParams {
   query: ListSuppliersQuery;
-  setFilter: (key: keyof ListSuppliersQuery, value: string | undefined) => void;
+  setFilter: (key: keyof ListSuppliersQuery, value: FilterValueType) => void;
   setPage: (page: number) => void;
   setLimit: (limit: number) => void;
   clearFilters: () => void;
@@ -36,19 +38,32 @@ export const useSupplierListParams = (): SupplierListParams => {
 
   const query = useMemo<ListSuppliersQuery>(() => {
     const search = searchParams.get('search')?.trim();
-    const countries = searchParams.getAll('country').map((c) => c.trim().toUpperCase());
+
+    const countries = [
+      ...new Set(
+        searchParams
+          .getAll('country')
+          .flatMap((value) => value.split(','))
+          .map((code) => code.trim().toUpperCase())
+          .filter(Boolean),
+      ),
+    ];
     const industry = searchParams.get('industry')?.trim();
 
+    const status = parseEnum<RelationshipStatus>(searchParams.get('status'), RELATIONSHIP_STATUSES);
+    const riskLevel = parseEnum<RiskLevel>(searchParams.get('riskLevel'), RISK_LEVELS);
+    const assessmentStatus = parseEnum<AssessmentStatus>(
+      searchParams.get('assessmentStatus'),
+      ASSESSMENT_STATUSES,
+    );
+
     return {
-      search: search || undefined,
+      search,
       country: countries.length ? countries : undefined,
-      industry: industry || undefined,
-      status: parseEnum<RelationshipStatus>(searchParams.get('status'), RELATIONSHIP_STATUSES),
-      riskLevel: parseEnum<RiskLevel>(searchParams.get('riskLevel'), RISK_LEVELS),
-      assessmentStatus: parseEnum<AssessmentStatus>(
-        searchParams.get('assessmentStatus'),
-        ASSESSMENT_STATUSES,
-      ),
+      industry,
+      status,
+      riskLevel,
+      assessmentStatus,
       page: parsePositiveInt(searchParams.get('page'), 1),
       limit: parsePositiveInt(searchParams.get('limit'), DEFAULT_PAGE_SIZE),
     };
@@ -69,13 +84,16 @@ export const useSupplierListParams = (): SupplierListParams => {
   );
 
   const setFilter = useCallback(
-    (key: keyof ListSuppliersQuery, value: string | undefined) => {
+    (key: keyof ListSuppliersQuery, value: FilterValueType) => {
       update((params) => {
-        if (value) {
+        params.delete(key);
+
+        if (Array.isArray(value)) {
+          value.forEach((entry) => params.append(key, entry));
+        } else if (value) {
           params.set(key, value);
-        } else {
-          params.delete(key);
         }
+
         // Any filter change invalidates the current offset.
         params.delete('page');
       });

@@ -8,12 +8,18 @@ import type {
   SupplierDetail,
 } from './types';
 
-export const pruneQuery = (query: ListSuppliersQuery): Record<string, string | number | string[]> =>
-  Object.fromEntries(
-    Object.entries(query).filter(
-      ([, value]) => value !== undefined && value !== null && value !== '',
-    ),
+/**
+ * Drops empty filters and flattens list values (`country`) into the comma-separated form
+ * the API documents, so the request carries one well-formed parameter per filter.
+ */
+export const pruneQuery = (query: ListSuppliersQuery): Record<string, string | number> => {
+  return Object.fromEntries(
+    Object.entries(query)
+      .filter(([, value]) => value !== undefined && value !== null && value !== '')
+      .filter(([, value]) => !Array.isArray(value) || value.length > 0)
+      .map(([key, value]) => [key, Array.isArray(value) ? value.join(',') : value]),
   );
+};
 
 export const suppliersApi = createApi({
   reducerPath: 'suppliersApi',

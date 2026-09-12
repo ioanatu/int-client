@@ -1,8 +1,13 @@
 import { http, HttpResponse } from 'msw';
 import type { ApiErrorResponse } from '../api/types';
-import { industryList, supplierDetail, supplierIndustries, suppliersPage } from './fixtures';
+import {
+  countryList,
+  industryList,
+  supplierDetail,
+  supplierIndustries,
+  suppliersPage,
+} from './fixtures';
 
-/** Absolute so it matches the base URL the tests configure (see `vitest.config.ts`). */
 export const API_BASE = 'http://localhost:3000/api/v1';
 
 /** Mirrors the backend's error envelope so the client's parsing is exercised for real. */
@@ -19,10 +24,17 @@ export const handlers = [
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search')?.toLowerCase();
     const industry = searchParams.get('industry')?.toLowerCase();
+    // Mirrors the backend, which accepts repeated params and comma-separated lists alike.
+    const countries = searchParams
+      .getAll('country')
+      .flatMap((value) => value.split(','))
+      .map((code) => code.trim().toUpperCase())
+      .filter(Boolean);
 
     const data = suppliersPage.data
       .filter((supplier) => !search || supplier.name.toLowerCase().includes(search))
-      .filter((supplier) => !industry || supplierIndustries[supplier.id] === industry);
+      .filter((supplier) => !industry || supplierIndustries[supplier.id] === industry)
+      .filter((supplier) => !countries.length || countries.includes(supplier.country));
 
     return HttpResponse.json({
       data,
@@ -31,6 +43,8 @@ export const handlers = [
   }),
 
   http.get(`${API_BASE}/industries`, () => HttpResponse.json(industryList)),
+
+  http.get(`${API_BASE}/countries`, () => HttpResponse.json(countryList)),
 
   http.get(`${API_BASE}/suppliers/:supplierId`, ({ params }) => {
     if (params.supplierId !== supplierDetail.id) {

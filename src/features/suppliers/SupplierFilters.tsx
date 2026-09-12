@@ -1,9 +1,17 @@
 import { Button } from '@ioanatu/component-library';
+import CancelIcon from '@mui/icons-material/Cancel';
 import SearchIcon from '@mui/icons-material/Search';
 import Box from '@mui/material/Box';
+import Checkbox from '@mui/material/Checkbox';
+import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
+import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
+import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import Select, { type SelectChangeEvent } from '@mui/material/Select';
+import type { SvgIconProps } from '@mui/material/SvgIcon';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useEffect, useState } from 'react';
@@ -17,20 +25,24 @@ import {
   type Search,
 } from '../../api/types';
 import { formatNumber, humanizeEnum } from '../../utils/format';
-import Select from '@mui/material/Select';
-import Chip from '@mui/material/Chip';
-import OutlinedInput from '@mui/material/OutlinedInput';
+import type { FilterValueType } from './useSupplierListParams';
 
 const SEARCH_DEBOUNCE_MS = 300;
+/** Keeps a long country list scrollable instead of running off the viewport. */
+const COUNTRY_MENU_PROPS = { slotProps: { paper: { sx: { maxHeight: 264, width: 240 } } } };
+
+const RemoveFilterIcon = ({ label, ...iconProps }: SvgIconProps & { label: string }) => (
+  <CancelIcon {...iconProps} aria-label={label} onMouseDown={(event) => event.stopPropagation()} />
+);
+
+const selectProps = { size: 'small', select: true, sx: { minWidth: 170 } } as const;
 
 interface SupplierFiltersProps {
   query: ListSuppliersQuery;
-  onFilterChange: (key: keyof ListSuppliersQuery, value: string | undefined) => void;
+  onFilterChange: (key: keyof ListSuppliersQuery, value: FilterValueType) => void;
   onClear: () => void;
   hasFilters: boolean;
 }
-
-const selectProps = { size: 'small', select: true, sx: { minWidth: 170 } } as const;
 
 export const SupplierFilters = ({
   query,
@@ -42,6 +54,7 @@ export const SupplierFilters = ({
   const [lastAppliedSearch, setLastAppliedSearch] = useState<Search>(query.search);
   const [isIndustryMenuOpened, setIsIndustryMenuOpened] = useState<boolean>(false);
   const [countriesMenuOpened, setCountriesMenuOpened] = useState<boolean>(false);
+  const [statusMenuOpened, setStatusMenuOpened] = useState<boolean>(false);
 
   if (query.search !== lastAppliedSearch) {
     setLastAppliedSearch(query.search);
@@ -63,27 +76,24 @@ export const SupplierFilters = ({
     isFetching: isLoadingIndustries,
     error: industriesError,
     refetch: refetchIndustries,
-  } = useListIndustriesQuery(undefined, {
-    skip: !isIndustryMenuOpened && !query.industry,
-  });
+  } = useListIndustriesQuery(undefined, { skip: !isIndustryMenuOpened && !query.industry });
 
   const {
     data: countriesList,
     isFetching: isLoadingCountries,
     error: countriesError,
     refetch: refetchCountries,
-  } = useListCountriesQuery(undefined, {
-    skip: !countriesMenuOpened && !query.country,
-  });
+  } = useListCountriesQuery(undefined, { skip: !countriesMenuOpened && !query.country });
 
-  const handleIndustryMenuOpen = () => {
-    setIsIndustryMenuOpened(true);
-    if (industriesError) refetchIndustries();
-  };
-
-  const handleCountryMenuOpen = () => {
-    setIsIndustryMenuOpened(true);
-    if (industriesError) refetchCountries();
+  const handleMenuOpen = (filter: string) => () => {
+    if (filter === 'Industry') {
+      setIsIndustryMenuOpened(true);
+      if (industriesError) refetchIndustries();
+    }
+    if (filter === 'Country') {
+      setCountriesMenuOpened(true);
+      if (countriesError) refetchCountries();
+    }
   };
 
   const industries = industryList?.data ?? [];
@@ -91,29 +101,60 @@ export const SupplierFilters = ({
   const isIndustryQueryWrong =
     selectedIndustry !== '' && !industries.some(({ id }) => id === selectedIndustry);
 
-  const renderIndustryValue = (value: unknown): string =>
-    industries.find(({ id }) => id === value)?.name ?? String(value);
-
-  // const renderCountryValue = (value: unknown): string =>
-  //   industries.find(({ id }) => id === value)?.name ?? String(value);
+  const renderFilterValue = (value: unknown, filter: 'industry' | 'status') => {
+    let name = '';
+    if (filter === 'industry') {
+      name = industries.find(({ id }) => id === value)?.name ?? String(value);
+    }
+    if (filter === 'status') {
+      name = RELATIONSHIP_STATUSES.find((status) => status === value) ?? String(value);
+    }
+    return (
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+        <Chip
+          label={name}
+          size="small"
+          onDelete={() => onFilterChange(filter, undefined)}
+          deleteIcon={<RemoveFilterIcon label={`Remove ${name}`} />}
+        />
+      </Box>
+    );
+  };
 
   const countries = countriesList?.data ?? [];
-  const selectedCountries = query.country ?? '';
+  const selectedCountries = query.country ?? [];
+  const checked = new Set(selectedCountries);
 
-  console.log('___ countries ', countries);
-  console.log('___ selectedCountries ', selectedCountries);
+  const countryName = (code: string) => countries.find(({ id }) => id === code)?.name ?? code;
 
-  const ITEM_HEIGHT = 48;
-  const ITEM_PADDING_TOP = 8;
-  const MenuProps = {
-    slotProps: {
-      paper: {
-        style: {
-          maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-          width: 250,
-        },
-      },
-    },
+  const handleDeleteCountry = (code: string) => () =>
+    onFilterChange(
+      'country',
+      selectedCountries.filter((selected) => selected !== code),
+    );
+
+  const renderCountryValue = (selected: string[]) => (
+    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+      {selected.map((code) => (
+        <Chip
+          key={code}
+          label={countryName(code)}
+          size="small"
+          onDelete={handleDeleteCountry(code)}
+          deleteIcon={<RemoveFilterIcon label={`Remove ${countryName(code)}`} />}
+        />
+      ))}
+    </Box>
+  );
+
+  const handleCountryChange = (event: SelectChangeEvent<string[]>) => {
+    const { value } = event.target;
+    onFilterChange('country', typeof value === 'string' ? value.split(',') : value);
+  };
+
+  const handleCloseMenu = (filter: string) => () => {
+    if (filter === 'industry') setIsIndustryMenuOpened(false);
+    if (filter === 'status') setStatusMenuOpened(false);
   };
 
   return (
@@ -140,71 +181,64 @@ export const SupplierFilters = ({
         }}
       />
 
-      {/* <TextField
-        {...selectProps}
-        label="Countries"
-        value={!isIndustryQueryWrong ? selectedCountries : ''}
-        onChange={(event) => onFilterChange('country', event.target.value || undefined)}
-        slotProps={{
-          select: { onOpen: handleCountryMenuOpen, renderValue: renderCountryValue },
-        }}
-      > */}
-      <Select
-        labelId="demo-multiple-chip-label"
-        id="demo-multiple-chip"
-        multiple
-        value={selectedCountries}
-        onOpen={handleCountryMenuOpen}
-        onChange={(event) => onFilterChange('country', event.target.value[0] || undefined)}
-        input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
-        renderValue={(selected) => (
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-            {selected.map((value) => (
-              <Chip key={value} label={value} size="small" />
-            ))}
-          </Box>
-        )}
-        MenuProps={MenuProps}
-      >
-        {isLoadingCountries && (
-          <MenuItem disabled>
-            <CircularProgress size={16} sx={{ mr: 1 }} aria-hidden />
-            Loading countries…
-          </MenuItem>
-        )}
+      <FormControl size="small" sx={{ minWidth: 220 }}>
+        <InputLabel id="country-filter-label">Countries</InputLabel>
+        <Select
+          labelId="country-filter-label"
+          multiple
+          value={selectedCountries}
+          onOpen={handleMenuOpen('Country')}
+          onClose={() => setCountriesMenuOpened(false)}
+          onChange={handleCountryChange}
+          input={<OutlinedInput label="Countries" />}
+          renderValue={renderCountryValue}
+          MenuProps={COUNTRY_MENU_PROPS}
+        >
+          {isLoadingCountries && (
+            <MenuItem disabled>
+              <CircularProgress size={16} sx={{ mr: 1 }} aria-hidden />
+              Loading countries…
+            </MenuItem>
+          )}
 
-        {countriesError && (
-          <MenuItem disabled sx={{ display: 'block', whiteSpace: 'normal', maxWidth: 280 }}>
-            <Typography variant="body2">{getErrorMessage(industriesError)}</Typography>
-            <Typography variant="caption" color="text.secondary">
-              Close and reopen to try again.
-            </Typography>
-          </MenuItem>
-        )}
+          {countriesError && (
+            <MenuItem disabled sx={{ display: 'block', whiteSpace: 'normal', maxWidth: 280 }}>
+              <Typography variant="body2">{getErrorMessage(countriesError)}</Typography>
+              <Typography variant="caption" color="text.secondary">
+                Close and reopen to try again.
+              </Typography>
+            </MenuItem>
+          )}
 
-        {countries.map((country) => (
-          <MenuItem key={country.id} value={country.id}>
-            {country.name}
-            <Typography
-              component="span"
-              variant="caption"
-              color="text.secondary"
-              sx={{ ml: 'auto', pl: 2 }}
-            >
-              {formatNumber(country.supplierCount)}
-            </Typography>
-          </MenuItem>
-        ))}
-      </Select>
-      {/* </TextField> */}
+          {countries.map((country) => (
+            <MenuItem key={country.id} value={country.id}>
+              <Checkbox size="small" checked={checked.has(country.id)} sx={{ mr: 1, p: 0.5 }} />
+              {country.name}
+              <Typography
+                component="span"
+                variant="caption"
+                color="text.secondary"
+                sx={{ ml: 'auto', pl: 2 }}
+              >
+                {formatNumber(country.supplierCount)}
+              </Typography>
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
 
       <TextField
         {...selectProps}
         label="Industry"
         value={!isIndustryQueryWrong ? selectedIndustry : ''}
         onChange={(event) => onFilterChange('industry', event.target.value || undefined)}
+        focused={isIndustryMenuOpened}
         slotProps={{
-          select: { onOpen: handleIndustryMenuOpen, renderValue: renderIndustryValue },
+          select: {
+            onOpen: handleMenuOpen('Industry'),
+            renderValue: (value) => renderFilterValue(value, 'industry'),
+            onClose: handleCloseMenu('industry'),
+          },
         }}
       >
         {isLoadingIndustries && (
@@ -243,6 +277,13 @@ export const SupplierFilters = ({
         label="Status"
         value={query.status ?? ''}
         onChange={(event) => onFilterChange('status', event.target.value || undefined)}
+        focused={statusMenuOpened}
+        slotProps={{
+          select: {
+            renderValue: (value) => renderFilterValue(value, 'status'),
+            onClose: handleCloseMenu('status'),
+          },
+        }}
       >
         {RELATIONSHIP_STATUSES.map((status) => (
           <MenuItem key={status} value={status}>

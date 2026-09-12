@@ -1,5 +1,6 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vitest/config';
+import { API_BASE } from './src/test/handlers';
 
 export default defineConfig({
   plugins: [react()],
@@ -9,7 +10,7 @@ export default defineConfig({
     setupFiles: ['./vitest.setup.ts'],
     // Node's `fetch` (used by RTK Query under jsdom) rejects relative URLs, so tests talk
     // to an absolute same-origin base that MSW intercepts.
-    env: { VITE_API_URL: 'http://localhost:3000/api/v1' },
+    env: { VITE_API_URL: API_BASE },
     server: {
       deps: {
         // The component library ships an ESM entry that does `import './...css'`. Deps in
