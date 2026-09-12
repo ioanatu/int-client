@@ -1,9 +1,8 @@
 import { Button } from '@ioanatu/component-library';
-import CancelIcon from '@mui/icons-material/Cancel';
+import { Chip } from '@ioanatu/component-library';
 import SearchIcon from '@mui/icons-material/Search';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
-import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
 import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -11,7 +10,6 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Select, { type SelectChangeEvent } from '@mui/material/Select';
-import type { SvgIconProps } from '@mui/material/SvgIcon';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { type ReactNode, useEffect, useState } from 'react';
@@ -31,10 +29,6 @@ const SEARCH_DEBOUNCE_MS = 300;
 /** Keeps a long country list scrollable instead of running off the viewport. */
 const COUNTRY_MENU_PROPS = { slotProps: { paper: { sx: { maxHeight: 264, width: 240 } } } };
 
-const RemoveFilterIcon = ({ label, ...iconProps }: SvgIconProps & { label: string }) => (
-  <CancelIcon {...iconProps} aria-label={label} onMouseDown={(event) => event.stopPropagation()} />
-);
-
 const selectProps = { size: 'small', select: true, sx: { minWidth: 170 } } as const;
 
 type FilterChangeHandler = (key: keyof ListSuppliersQuery, value: FilterValueType) => void;
@@ -43,12 +37,22 @@ const FilterChips = ({ children }: { children: ReactNode }) => (
   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>{children}</Box>
 );
 
-const FilterChip = ({ label, onDelete }: { label: string; onDelete: () => void }) => (
+const FilterChip = ({
+  label,
+  onDelete,
+  variant,
+}: {
+  label: string;
+  onDelete: () => void;
+  variant: 'default' | 'success' | 'warning' | 'error' | 'info' | undefined;
+}) => (
   <Chip
     label={label}
-    size="small"
+    size="sm"
     onDelete={onDelete}
-    deleteIcon={<RemoveFilterIcon label={`Remove ${label}`} />}
+    onMouseDown={(event) => event.stopPropagation()}
+    variant={variant}
+    // deleteIcon={<RemoveFilterIcon label={`Remove ${label}`} />}
   />
 );
 
@@ -73,6 +77,7 @@ const EnumFilter = ({ label, filterKey, value, options, onFilterChange }: EnumFi
             <FilterChip
               label={humanizeEnum(String(selected))}
               onDelete={() => onFilterChange(filterKey, undefined)}
+              variant="info"
             />
           </FilterChips>
         ),
@@ -154,7 +159,11 @@ export const SupplierFilters = ({
 
     return (
       <FilterChips>
-        <FilterChip label={name} onDelete={() => onFilterChange('industry', undefined)} />
+        <FilterChip
+          label={name}
+          onDelete={() => onFilterChange('industry', undefined)}
+          variant="success"
+        />
       </FilterChips>
     );
   };
@@ -174,7 +183,12 @@ export const SupplierFilters = ({
   const renderCountryValue = (selected: string[]) => (
     <FilterChips>
       {selected.map((code) => (
-        <FilterChip key={code} label={countryName(code)} onDelete={handleDeleteCountry(code)} />
+        <FilterChip
+          key={code}
+          label={countryName(code)}
+          onDelete={handleDeleteCountry(code)}
+          variant="default"
+        />
       ))}
     </FilterChips>
   );
